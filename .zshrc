@@ -5,7 +5,7 @@
 export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH="/home/zen/.oh-my-zsh"
+export ZSH="$HOME/.oh-my-zsh"
 # export ALL_PROXY=http://127.0.0.1:12333
 # export ALL_PROXY=http://127.0.0.1:10809
 # # v2ray
