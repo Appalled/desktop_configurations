@@ -513,6 +513,7 @@ nmap <leader>w :w!<CR>
 " nnoremap <silent> <leader>f :call Fzf_dev()<CR>
 nnoremap <silent> <Leader>f :Files<CR>
 nnoremap <silent> <Leader>b :BLine<CR>
+nnoremap <silent> <Leader>a :Ag<CR>
 nnoremap <silent> <Leader>B :Buffers<CR>
 nnoremap <silent> <Leader>l :Line<CR>
 nnoremap <silent> <Leader>t :Windows<CR>

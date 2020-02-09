@@ -1,7 +1,8 @@
 # load tmux while entering zsh
-ZSH_TMUX_AUTOSTART=true
+# ZSH_TMUX_AUTOSTART=true
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
 export ZSH="/home/zen/.oh-my-zsh"
@@ -18,13 +19,6 @@ export ALL_PROXY=socks5://127.0.0.1:10808
 # export WORKON_HOME=$HOME/.virtualenvs
 # source /usr/bin/virtualenvwrapper.sh
 
-alias pydata='source ~/data/bin/activate'
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
-
-if [[ -n $VIRTUAL_ENV && -e "${VIRTUAL_ENV}/bin/activate" ]]; then
-    source "${VIRTUAL_ENV}/bin/activate"
-fi
 
 # editor
 export EDITOR='nvim'
@@ -96,7 +90,8 @@ SOLARIZED_THEME="dark"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git vi-mode zsh-syntax-highlighting)
+plugins=(git vi-mode zsh-syntax-highlighting zsh-autosuggestions zsh-completions)
+autoload -U compinit && compinit
 
 source $ZSH/oh-my-zsh.sh
 
@@ -216,3 +211,14 @@ cf() {
     fi
 }
 
+
+# put at last
+alias pydata='source ~/data/bin/activate'
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+
+if [[ -n $VIRTUAL_ENV && -e "${VIRTUAL_ENV}/bin/activate" ]]; then
+    source "${VIRTUAL_ENV}/bin/activate"
+fi
+# command prompt
+eval "$(starship init zsh)"
