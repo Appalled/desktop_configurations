@@ -41,7 +41,8 @@ Plug 'lambdalisue/vim-fullscreen'     " fullscreen
 Plug 'junegunn/goyo.vim'              " zen mode
 " Plug 'junegunn/limelight.vim'
 Plug 'numirias/semshi',               {'do': ':UpdateRemotePlugins'}
-Plug 'liuchengxu/vista.vim'
+Plug 'liuchengxu/vista.vim'           "display structure of context
+Plug 'markonm/traces.vim'             "highlight and live preview for substitute and smagic
 
 " ================= Move ================== "
 Plug 'easymotion/vim-easymotion'
@@ -782,7 +783,7 @@ nnoremap <silent> <Leader>r :call CompileRunGcc()<cr>
 
 func! CompileRunGcc()
     exec "w"
-    let l:quickfix_height = winheight("%")/4
+    let l:quickfix_height = float2nr(winheight("%")/2.618)
     if &filetype == 'python'
         if search("@profile")
             exec "AsyncRun kernprof -l -v %"
