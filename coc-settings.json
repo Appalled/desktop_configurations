@@ -9,5 +9,26 @@
     "r.lsp.path":"C:\\Program Files\\R\\R-3.6.0\\bin\\r.exe",
     "python.pythonPath":"python",
     "python.pipenvPath":"/home/zen/.pyenv",
-    "python.analysis.diagnosticEnabled": false
+    "python.analysis.diagnosticEnabled": false,
+    "languageserver": {
+        "haskell": {
+            "command": "hie-wrapper",
+            "args": ["--lsp"],
+            "rootPatterns": [
+                "stack.yaml",
+                "cabal.config",
+                "package.yaml"
+            ],
+            "filetypes": [
+                "hs",
+                "lhs",
+                "haskell"
+            ],
+            "initializationOptions": {
+                "languageServerHaskell": {
+                    "hlintOn": true
+                }
+            }
+        }
+    }
 }
