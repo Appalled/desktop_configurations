@@ -9,9 +9,11 @@ export ZSH="$HOME/.oh-my-zsh"
 # export ALL_PROXY=http://127.0.0.1:12333
 # export ALL_PROXY=http://127.0.0.1:10809
 # # v2ray
-export ALL_PROXY=socks5://127.0.0.1:10808
+# export ALL_PROXY=socks5://127.0.0.1:10808
 # # ssrr-local
-# export ALL_PROXY=socks5://127.0.0.1:10802
+# export ALL_ROXY=socks5://127.0.0.1:10802
+# export https_PROXY=socks5://127.0.0.1:10802
+# export http_PROXY=socks5://127.0.0.1:10802
 # eval $(thefuck --alias)
 # export TERM=screen-256color
 
@@ -153,7 +155,7 @@ fo() {
 # f 'echo Selected music:' --extention mp3
 # fm rm # To rm files in current directory
 f() {
-    sels=( "${(@f)$(fd "${fd_default[@]}" "${@:2}"| fzf)}" )
+    sels=( "${(@f)$(find "${fd_default[@]}" "${@:2}"| fzf)}" )
     test -n "$sels" && print -z -- "$1 ${sels[@]:q:q}"
 }
 
@@ -212,6 +214,8 @@ cf() {
 }
 
 
+# command prompt
+eval "$(starship init zsh)"
 # put at last
 alias pydata='source ~/data/bin/activate'
 eval "$(pyenv init -)"
@@ -220,5 +224,3 @@ eval "$(pyenv virtualenv-init -)"
 if [[ -n $VIRTUAL_ENV && -e "${VIRTUAL_ENV}/bin/activate" ]]; then
     source "${VIRTUAL_ENV}/bin/activate"
 fi
-# command prompt
-eval "$(starship init zsh)"

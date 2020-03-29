@@ -43,6 +43,7 @@ Plug 'junegunn/goyo.vim'              " zen mode
 Plug 'numirias/semshi',               {'do': ':UpdateRemotePlugins'}
 Plug 'liuchengxu/vista.vim'           "display structure of context
 Plug 'markonm/traces.vim'             "highlight and live preview for substitute and smagic
+Plug 'neovimhaskell/haskell-vim'      "highlight of haskell
 
 " ================= Move ================== "
 Plug 'easymotion/vim-easymotion'
@@ -58,6 +59,8 @@ endif
 
 " ================= Edit ================== "
 Plug 'neoclide/coc.nvim',               {'branch': 'release'}
+" Plug 'valloric/youcompleteme'
+" Plug 'ervandew/supertab'
 Plug 'w0rp/ale'                         "linting
 " Plug 'SirVer/ultisnips'                 " snippets
 Plug 'honza/vim-snippets'               " actual snippets
@@ -299,14 +302,14 @@ let g:coc_global_extensions = [
             \'coc-lists',
             \'coc-snippets',
             \'coc-ultisnips',
-            \'coc-python',
             \'coc-xml',
             \'coc-syntax',
             \'coc-sql',
             \'coc-r-lsp',
-            \'coc-ccls',
             \]
 
+            " \'coc-ccls',
+            " \'coc-python',
 
 "ale
 "始终开启标志列
@@ -494,9 +497,9 @@ endfunction
 "" coc mappings
 
 " " multi cursor shortcuts
-" nmap <silent> <C-c> <Plug>(coc-cursors-position)
-" nmap <silent> <C-a> <Plug>(coc-cursors-word)
-" xmap <silent> <C-a> <Plug>(coc-cursors-range)
+nmap <silent> <C-c> <Plug>(coc-cursors-position)
+nmap <silent> <C-a> <Plug>(coc-cursors-word)
+xmap <silent> <C-a> <Plug>(coc-cursors-range)
 
 " " for project wide search
 map <leader>/ :Ag<CR>
@@ -814,9 +817,18 @@ func! CompileRunGcc()
         " exec "copen"
         exec "wincmd p"
         exec "let w:quickfix_title = 'foo'"
+    elseif &filetype == 'tex'
+        exec "AsyncRun -raw xelatex % "
+        exec "rightbelow copen ".quickfix_height
+        " exec "copen"
+        exec "wincmd p"
+        exec "let w:quickfix_title = 'foo'"
     endif
 
 endfunc
 
 "zeal map
 nnoremap gz :!zeal "<cword>"&<CR><CR>
+" let g:python3_host_prog = '$HOME/.pyenv/versions/data376_YCM/bin/python'
+" let g:ycm_auto_trigger=1
+" let g:ycm_seed_identifiers_with_syntax = 1
