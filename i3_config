@@ -126,6 +126,7 @@ set $ws7 "7"
 set $ws8 "8"
 set $ws9 "9"
 set $ws10 "10"
+<<<<<<< HEAD
 
 # # config for gram
 # # switch to workspace
@@ -137,13 +138,23 @@ set $ws10 "10"
 # workspace $ws6 output eDP1
 
 # # config for gram with external monitor
+=======
+>>>>>>> c0b44a0b56e125f3d9904db203fd4c45549ecd13
 # # switch to workspace
-# workspace $ws1 output HDMI1
+# workspace $ws1 output eDP1
 # workspace $ws2 output eDP1
 # workspace $ws3 output eDP1
 # workspace $ws4 output eDP1
 # workspace $ws5 output eDP1
-# workspace $ws6 output HDMI1
+# workspace $ws6 output eDP1
+
+# switch to workspace
+workspace $ws1 output HDMI1
+workspace $ws2 output eDP1
+workspace $ws3 output eDP1
+workspace $ws4 output eDP1
+workspace $ws5 output eDP1
+workspace $ws6 output HDMI1
 
 # # config for 6700k with two monitors
 # # switch to workspace

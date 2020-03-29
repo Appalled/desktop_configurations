@@ -12,11 +12,14 @@
     "diagnostic.messageTarget": "float",
     "signature.target": "float",
     "coc.preferences.hoverTarget": "float",
+    "python.pipenvPath":"/home/zen/.pyenv",
+    "python.analysis.diagnosticEnabled": false,
     "languageserver": {
         "haskell": {
             "command": "hie-wrapper",
+            "args": ["--lsp"],
             "rootPatterns": [
-                ".stack.yaml",
+                "stack.yaml",
                 "cabal.config",
                 "package.yaml"
             ],
@@ -27,6 +30,7 @@
             ],
             "initializationOptions": {
                 "languageServerHaskell": {
+                    "hlintOn": true
                 }
             },
         },

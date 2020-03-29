@@ -32,6 +32,7 @@ Plug 'psliwka/vim-smoothie'           " some very smooth ass scrolling
 Plug 'ryanoasis/vim-devicons'         " pretty icons everywhere
 Plug 'luochen1990/rainbow'            " rainbow paranthesis
 Plug 'sheerun/vim-polyglot'           " syntax hilight for multi languages
+Plug 'neovimhaskell/haskell-vim'      " syntax for haskell
 Plug 'tmhedberg/simpylfold'
 Plug 'Yggdroot/indentLine'            " show indentation lines
 Plug 'google/vim-searchindex'         " add number of found matching search items
