@@ -25,6 +25,8 @@ call plug#begin('~/.config/nvim/plugged')
 " ================= Display ================== "
 Plug 'morhetz/gruvbox'
 Plug 'junegunn/seoul256.vim'
+Plug 'chriskempson/base16-vim'
+Plug 'fatih/molokai'
 Plug 'vim-airline/vim-airline'        " airline status bar
 Plug 'vim-airline/vim-airline-themes' " airline themes
 Plug 'romainl/vim-cool'               " disable hl until another search is performed
@@ -90,6 +92,7 @@ Plug 'jeetsukumaran/vim-pythonsense'    " handle python syntax obj
 Plug 'chrisbra/csv.vim'                 " csv
 Plug 'hotoo/pangu.vim'                  " Chinese
 Plug 'wellle/tmux-complete.vim'         " complete words from a tmux panes
+Plug 'dhruvasagar/vim-table-mode'       "edit tables
 
 " ================= Exec ================== "
 Plug 'skywind3000/asyncrun.vim'         " async run scipts
@@ -305,9 +308,8 @@ let g:coc_global_extensions = [
             \'coc-syntax',
             \'coc-sql',
             \'coc-r-lsp',
-            \'coc-ccls',
             \]
-
+" \'coc-ccls',
 
 "ale
 "始终开启标志列
@@ -738,7 +740,6 @@ xmap i, <Plug>(swap-textobject-i)
 omap a, <Plug>(swap-textobject-a)
 xmap a, <Plug>(swap-textobject-a)
 
-autocmd FileType vim,tex,rmarkdown,rmd,markdown,todo,yaml,yml let b:autoformat_autoindent=0
 "nvim-R
 let g:R_assign = 0
 let R_complete = 1
@@ -774,6 +775,22 @@ noremap <F3> :Autoformat<CR>
 let g:formatterpath = ['python', 'black']
 autocmd FileType vim,tex,rmarkdown,rmd,markdown,todo,yaml,yml let b:autoformat_autoindent=0
 au BufWrite * :Autoformat
+
+"vim-table-mode
+
+function! s:isAtStartOfLine(mapping)
+  let text_before_cursor = getline('.')[0 : col('.')-1]
+  let mapping_pattern = '\V' . escape(a:mapping, '\')
+  let comment_pattern = '\V' . escape(substitute(&l:commentstring, '%s.*$', '', ''), '\')
+  return (text_before_cursor =~? '^' . ('\v(' . comment_pattern . '\v)?') . '\s*\v' . mapping_pattern . '\v$')
+endfunction
+
+inoreabbrev <expr> <bar><bar>
+          \ <SID>isAtStartOfLine('\|\|') ?
+          \ '<c-o>:TableModeEnable<cr><bar><space><bar><left><left>' : '<bar><bar>'
+inoreabbrev <expr> __
+          \ <SID>isAtStartOfLine('__') ?
+          \ '<c-o>:silent! TableModeDisable<cr>' : '__'
 
 " ======================== Exec ====================== "
 " carbon sh now
@@ -813,6 +830,12 @@ func! CompileRunGcc()
         " exec "vertical rightbelow copen 75"
         exec "rightbelow copen ".quickfix_height
         " exec "copen"
+        exec "wincmd p"
+        exec "let w:quickfix_title = 'foo'"
+    elseif &filetype == 'haskell'
+        exec "AsyncRun -raw stack exec -- ghc % && ./%<"
+        " exec "AsyncRun -raw stack %"
+        exec "rightbelow copen ".quickfix_height
         exec "wincmd p"
         exec "let w:quickfix_title = 'foo'"
     endif

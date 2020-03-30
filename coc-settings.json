@@ -1,5 +1,5 @@
 {"suggest.triggerAfterInsertEnter": true,
-    "python.jediEnabled": true,
+    "python.jediEnabled": false,
     "suggest.minTriggerInputLength": 2,
     "diagnostic.displayByAle":true,
     "suggest.floatEnable": true,
