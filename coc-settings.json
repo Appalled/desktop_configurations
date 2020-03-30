@@ -1,13 +1,17 @@
 {"suggest.triggerAfterInsertEnter": true,
     "python.jediEnabled": false,
+    "python.jediMemoryLimit":-1,
+    "python.analysis.openFilesOnly":false,
+    "python.autoUpdateLanguageServer":false,
+    "python.pythonPath":"python3",
+    "python.pipenvPath":"/home/zz/.pyenv",
+    "python.analysis.diagnosticEnabled": false,
     "suggest.minTriggerInputLength": 2,
     "diagnostic.displayByAle":true,
     "suggest.floatEnable": true,
     "diagnostic.messageTarget": "float",
     "signature.target": "float",
     "coc.preferences.hoverTarget": "float",
-    "r.lsp.path":"C:\\Program Files\\R\\R-3.6.0\\bin\\r.exe",
-    "python.pythonPath":"python",
     "python.pipenvPath":"/home/zen/.pyenv",
     "python.analysis.diagnosticEnabled": false,
     "languageserver": {
@@ -27,6 +31,73 @@
             "initializationOptions": {
                 "languageServerHaskell": {
                     "hlintOn": true
+                }
+            },
+        },
+        "python": {
+            "command": "python",
+            "args": [
+                "-mpyls",
+                "-vv",
+                "--log-file",
+                "/tmp/lsp_python.log"
+            ],
+            "trace.server": "verbose",
+            "filetypes": [
+                "python"
+            ],
+            "settings": {
+                "pyls": {
+                    "enable": true,
+                    "trace": {
+                        "server": "verbose"
+                    },
+                    "commandPath": "",
+                    "configurationSources": [
+                        "pycodestyle"
+                    ],
+                    "plugins": {
+                        "jedi_completion": {
+                            "enabled": true
+                        },
+                        "jedi_hover": {
+                            "enabled": true
+                        },
+                        "jedi_references": {
+                            "enabled": true
+                        },
+                        "jedi_signature_help": {
+                            "enabled": true
+                        },
+                        "jedi_symbols": {
+                            "enabled": true,
+                            "all_scopes": true
+                        },
+                        "mccabe": {
+                            "enabled": true,
+                            "threshold": 15
+                        },
+                        "preload": {
+                            "enabled": true
+                        },
+                        "pycodestyle": {
+                            "enabled": true
+                        },
+                        "pydocstyle": {
+                            "enabled": false,
+                            "match": "(?!test_).*\\.py",
+                            "matchDir": "[^\\.].*"
+                        },
+                        "pyflakes": {
+                            "enabled": false
+                        },
+                        "rope_completion": {
+                            "enabled": false
+                        },
+                        "yapf": {
+                            "enabled": false
+                        }
+                    }
                 }
             }
         }
