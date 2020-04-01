@@ -27,8 +27,7 @@ Plug 'morhetz/gruvbox'
 Plug 'junegunn/seoul256.vim'
 Plug 'chriskempson/base16-vim'
 Plug 'fatih/molokai'
-Plug 'vim-airline/vim-airline'        " airline status bar
-Plug 'vim-airline/vim-airline-themes' " airline themes
+Plug 'itchyny/lightline.vim'          " lightline
 Plug 'romainl/vim-cool'               " disable hl until another search is performed
 Plug 'psliwka/vim-smoothie'           " some very smooth ass scrolling
 Plug 'ryanoasis/vim-devicons'         " pretty icons everywhere
@@ -79,6 +78,7 @@ Plug 'chiel92/vim-autoformat'           " autoformat
 Plug 'brglng/vim-im-select'             " input method
 Plug 'farmergreg/vim-lastplace'         " open files at the last edited place
 Plug 'kana/vim-repeat'                  " repead by dot
+Plug 'mjbrownie/swapit'                 " swith between true and false combined with speeddating
 
 Plug 'wellle/targets.vim'
 Plug 'kana/vim-textobj-user'
@@ -212,18 +212,70 @@ endif
 
 " ======================== Plugin Configurations ======================== "
 
-" Airline
-" let g:airline#themes#clean#palette = 1
-call airline#parts#define_raw('linenr', '%l')
-call airline#parts#define_accent('linenr', 'bold')
-let g:airline_section_z = airline#section#create(['%3p%%  ',
-            \ g:airline_symbols.linenr .' ', 'linenr', ':%c '])
-let g:airline_section_warning = ''
-let g:airline#extensions#tabline#enabled = 1
-let g:airline_powerline_fonts = 0
-let g:airline#extensions#tabline#fnamemod = ':t'        " show only file name on tabs
-let g:airline#extensions#ale#enabled = 1                " ALE integration
-let g:airline_skip_empty_sections = 1
+"lightline
+let g:lightline = {
+      \ 'colorscheme': 'wombat',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'gitbranch', 'cocstatus',] ],
+      \   'right': [ [ 'readonly', 'filename', 'modified' ] ]
+      \ },
+      \ 'component_function': {
+      \   'gitbranch': 'FugitiveHead',
+      \   'readonly': 'LightlineReadonly',
+      \   'fileformat': 'LightlineFileformat',
+      \   'filetype': 'LightlineFiletype',
+      \   'filename': 'LightlineFilename',
+      \   'cocstatus': 'LightLineCoc',
+      \ },
+      \ }
+
+
+function! LightlineReadonly()
+  return &readonly && &filetype !~# '\v(help|vimfiler|unite)' ? 'RO' : ''
+endfunction
+
+function! LightlineFileformat()
+  return winwidth(0) > 70 ? &fileformat : ''
+endfunction
+
+function! LightlineFiletype()
+  return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
+endfunction
+
+let g:unite_force_overwrite_statusline = 0
+let g:vimfiler_force_overwrite_statusline = 0
+
+function! LightlineFilename()
+  let filename = expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
+  let modified = &modified ? ' +' : ''
+  return filename . modified
+endfunction
+
+" set alias for mode name
+let g:lightline = {
+      \ 'mode_map': {
+        \ 'n' : 'N',
+        \ 'i' : 'I',
+        \ 'R' : 'R',
+        \ 'v' : 'V',
+        \ 'V' : 'VL',
+        \ "\<C-v>": 'VB',
+        \ 'c' : 'C',
+        \ 's' : 'S',
+        \ 'S' : 'SL',
+        \ "\<C-s>": 'SB',
+        \ 't': 'T',
+        \ },
+      \ }
+
+function! LightLineCoc()
+    if empty(get(g:, 'coc_status', '')) && empty(get(b:, 'coc_diagnostic_info', {}))
+        return ''
+    endif
+    return trim(coc#status())
+endfunction
+
 
 "coc
 "解决coc弹窗出错
@@ -249,18 +301,19 @@ set shortmess+=c
 " always show signcolumns
 set signcolumn=yes
 
-" Use tab for trigger completion with characters ahead and navigate.
-" Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
-inoremap <silent><expr> <TAB>
-            \ pumvisible() ? "\<C-n>" :
-            \ <SID>check_back_space() ? "\<TAB>" :
-            \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
+" use <tab> for trigger completion and navigate to the next complete item
 function! s:check_back_space() abort
-    let col = col('.') - 1
-    return !col || getline('.')[col - 1]  =~# '\s'
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~ '\s'
 endfunction
+
+inoremap <silent><expr> <Tab>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<Tab>" :
+      \ coc#refresh()
+
+let g:UltiSnipsExpandTrigger="<s-tab"
 
 " Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
 " Coc only does snippet and additional edit on confirm.
@@ -304,14 +357,15 @@ let g:coc_global_extensions = [
             \'coc-html',
             \'coc-yaml',
             \'coc-lists',
-            \'coc-snippets',
-            \'coc-ultisnips',
             \'coc-xml',
             \'coc-syntax',
             \'coc-sql',
             \'coc-r-lsp',
+            \'coc-snippets',
             \]
 
+            " \'coc-ultisnips',
+            " \'coc-neosnippet',
             " \'coc-ccls',
             " \'coc-python',
 
@@ -499,11 +553,10 @@ endfunction
 " vnoremap d "_d
 
 "" coc mappings
-
 " " multi cursor shortcuts
 nmap <silent> <C-c> <Plug>(coc-cursors-position)
-nmap <silent> <C-a> <Plug>(coc-cursors-word)
-xmap <silent> <C-a> <Plug>(coc-cursors-range)
+" nmap <silent> <C-a> <Plug>(coc-cursors-word)
+" xmap <silent> <C-a> <Plug>(coc-cursors-range)
 
 " " for project wide search
 map <leader>/ :Ag<CR>
@@ -677,6 +730,8 @@ let g:vista_sidebar_position = 'vertical topleft'
 nmap <leader>g :Goyo<CR>
 " 当光标一段时间保持不动了，就禁用高亮
 autocmd cursorhold * set nohlsearch
+" errormsg timeout
+autocmd CursorMoved * echo
 " 当输入查找命令时，再启用高亮
 noremap n :set hlsearch<cr>n
 noremap N :set hlsearch<cr>N
@@ -743,6 +798,12 @@ omap i, <Plug>(swap-textobject-i)
 xmap i, <Plug>(swap-textobject-i)
 omap a, <Plug>(swap-textobject-a)
 xmap a, <Plug>(swap-textobject-a)
+
+"switch between true and false combined with speeddating
+nmap <Plug>SwapItFallbackIncrement <Plug>SpeedDatingUp
+nmap <Plug>SwapItFallbackDecrement <Plug>SpeedDatingDown
+vmap <Plug>SwapItFallbackIncrement <Plug>SpeedDatingUp
+vmap <Plug>SwapItFallbackDecrement <Plug>SpeedDatingDown
 
 "nvim-R
 let g:R_assign = 0
