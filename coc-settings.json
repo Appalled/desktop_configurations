@@ -2,7 +2,7 @@
     "python.jediEnabled": false,
     "python.jediMemoryLimit":-1,
     "suggest.minTriggerInputLength": 2,
-    "diagnostic.displayByAle":true,
+    "diagnostic.displayByAle": true,
     "suggest.floatEnable": true,
     "diagnostic.messageTarget": "float",
     "signature.target": "float",

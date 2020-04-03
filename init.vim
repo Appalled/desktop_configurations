@@ -25,9 +25,9 @@ call plug#begin('~/.config/nvim/plugged')
 " ================= Display ================== "
 Plug 'morhetz/gruvbox'
 Plug 'junegunn/seoul256.vim'
-Plug 'chriskempson/base16-vim'
 Plug 'fatih/molokai'
 Plug 'itchyny/lightline.vim'          " lightline
+Plug 'maximbaz/lightline-ale'         "lightline ale
 Plug 'romainl/vim-cool'               " disable hl until another search is performed
 Plug 'psliwka/vim-smoothie'           " some very smooth ass scrolling
 Plug 'ryanoasis/vim-devicons'         " pretty icons everywhere
@@ -114,7 +114,7 @@ colorscheme gruvbox
 highlight Normal guibg=NONE ctermbg=None
 set termguicolors                                       " Opaque Background
 set mouse=a                                             " enable mouse scrolling
-" set clipboard+=unnamedplus                              " use system clipboard by default
+" set clipboard+=unnamedplus                            " use system clipboard by default
 
 " ===================== Other Configurations ===================== "
 
@@ -212,13 +212,21 @@ endif
 
 " ======================== Plugin Configurations ======================== "
 
+" Add diagnostic info for https://github.com/itchyny/lightline.vim
+function! CocCurrentFunction()
+    return get(b:, 'coc_current_function', '')
+endfunction
+
 "lightline
 let g:lightline = {
-      \ 'colorscheme': 'wombat',
+      \ 'colorscheme': 'ayu_mirage',
       \ 'active': {
-      \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'gitbranch', 'cocstatus',] ],
-      \   'right': [ [ 'readonly', 'filename', 'modified' ] ]
+      \   'left': [ [ 'mode', 'paste', 'gitbranch'],
+      \             [ 'cocstatus' ] ],
+      \   'right': [ [ 'readonly', 'filename' ], [ 'linter_errors', 'linter_warnings' ] ]
+      \ },
+      \ 'inactive': {
+      \   'right': [ [ 'readonly', 'filename'  ] ]
       \ },
       \ 'component_function': {
       \   'gitbranch': 'FugitiveHead',
@@ -226,9 +234,37 @@ let g:lightline = {
       \   'fileformat': 'LightlineFileformat',
       \   'filetype': 'LightlineFiletype',
       \   'filename': 'LightlineFilename',
-      \   'cocstatus': 'LightLineCoc',
+      \   'cocstatus' : 'LightLineCoc'
       \ },
+      \ 'component_expand':{
+      \  'linter_checking': 'lightline#ale#checking',
+      \  'linter_infos': 'lightline#ale#infos',
+      \  'linter_warnings': 'lightline#ale#warnings',
+      \  'linter_errors': 'lightline#ale#errors',
+      \  'linter_ok': 'lightline#ale#ok',
+      \},
+      \'component_type' : {
+      \     'linter_checking': 'right',
+      \     'linter_infos': 'right',
+      \     'linter_warnings': 'warning',
+      \     'linter_errors': 'error',
+      \     'linter_ok': 'right',
+      \ },
+      \ 'mode_map': {
+        \ 'n' : 'N',
+        \ 'i' : 'I',
+        \ 'R' : 'R',
+        \ 'v' : 'V',
+        \ 'V' : 'VL',
+        \ "\<C-v>": 'VB',
+        \ 'c' : 'C',
+        \ 's' : 'S',
+        \ 'S' : 'SL',
+        \ "\<C-s>": 'SB',
+        \ 't': 'T',
+        \ },
       \ }
+
 
 
 function! LightlineReadonly()
@@ -252,29 +288,13 @@ function! LightlineFilename()
   return filename . modified
 endfunction
 
-" set alias for mode name
-let g:lightline = {
-      \ 'mode_map': {
-        \ 'n' : 'N',
-        \ 'i' : 'I',
-        \ 'R' : 'R',
-        \ 'v' : 'V',
-        \ 'V' : 'VL',
-        \ "\<C-v>": 'VB',
-        \ 'c' : 'C',
-        \ 's' : 'S',
-        \ 'S' : 'SL',
-        \ "\<C-s>": 'SB',
-        \ 't': 'T',
-        \ },
-      \ }
-
 function! LightLineCoc()
     if empty(get(g:, 'coc_status', '')) && empty(get(b:, 'coc_diagnostic_info', {}))
         return ''
     endif
     return trim(coc#status())
 endfunction
+
 
 
 "coc
@@ -331,10 +351,6 @@ nmap <silent> gj <Plug>(coc-diagnostic-next)
 nmap <silent> gk <Plug>(coc-diagnostic-prev)
 nmap <silent> gk <Plug>(coc-diagnostic-references)
 
-" Add diagnostic info for https://github.com/itchyny/lightline.vim
-function! CocCurrentFunction()
-    return get(b:, 'coc_current_function', '')
-endfunction
 
 
 "Coc-snippet
@@ -393,6 +409,7 @@ let g:ale_sign_error = '>>'
 let g:ale_sign_warning = '--'
 let g:ale_linters = {'python': ['flake8','pylint']}
 let g:ale_linters_ignore = {'python': ['pylint']}
+let g:ale_python_flake8_options="--ignore=E501,W503 "
 "添加检测完成后回调
 augroup YourGroup
     autocmd!
