@@ -96,6 +96,7 @@ Plug 'chrisbra/csv.vim'                 " csv
 Plug 'hotoo/pangu.vim'                  " Chinese
 Plug 'wellle/tmux-complete.vim'         " complete words from a tmux panes
 Plug 'dhruvasagar/vim-table-mode'       "edit tables
+Plug 'nathangrigg/vim-beancount'        " beancount
 
 " ================= Exec ================== "
 Plug 'skywind3000/asyncrun.vim'         " async run scipts
