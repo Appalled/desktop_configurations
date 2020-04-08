@@ -58,6 +58,7 @@ else
     Plug 'roxma/nvim-yarp'
     Plug 'roxma/vim-hug-neovim-rpc'
 endif
+Plug 'takac/vim-hardtime'             " no jjjjkkkkk
 
 " ================= Edit ================== "
 Plug 'neoclide/coc.nvim',               {'branch': 'release'}
@@ -104,6 +105,7 @@ Plug 'KabbAmine/zeavim.vim'             " doc for all
 Plug 'iamcco/markdown-preview.nvim',    { 'do': 'cd app & yarn install' } " markdown preview
 Plug 'kristijanhusak/vim-carbon-now-sh' " lit code screenshots
 Plug 'tpope/vim-fugitive'               " git support
+Plug 'ianding1/leetcode.vim'            " leetcode
 
 call plug#end()
 
@@ -647,11 +649,6 @@ call defx#custom#column('mark', {
             \ })
 
 
-""leetcode
-"nnoremap <leader>ll :LeetCodeList<cr>
-"nnoremap <leader>lt :LeetCodeTest<cr>
-"nnoremap <leader>ls :LeetCodeSubmit<cr>
-"nnoremap <leader>li :LeetCodeSignIn<cr>
 
 "defx
 autocmd FileType defx call s:defx_my_settings()
@@ -784,7 +781,9 @@ set previewheight=3
 nmap <leader>h :pedit <CR>
 map <leader>H :pc <CR>
 
-" let g:semshi#simplify_markup = v:true
+let g:semshi#simplify_markup = v:true
+let g:semshi#always_update_all_highlights = v:true
+let g:hardtime_default_on = 1
 
 " ======================== Edit ====================== "
 " Copy to clipboard
@@ -800,7 +799,9 @@ vnoremap <leader>p "+p
 vnoremap <leader>P "+P
 
 " for global rename
-nmap <leader>rn <Plug>(coc-rename)
+" nmap <leader>rn <Plug>(coc-rename)
+" use Semshi to rename instead of coc
+nmap <silent> <leader>rn :Semshi rename<CR>
 
 " Easyalign
 " Start interactive EasyAlign in visual mode (e.g. vipga)
@@ -916,7 +917,8 @@ func! CompileRunGcc()
         exec "wincmd p"
         exec "let w:quickfix_title = 'foo'"
     elseif &filetype == 'haskell'
-        exec "AsyncRun -raw stack exec -- ghc % && ./%<"
+        exec "AsyncRun -raw ghc --make %< && ./%<"
+        " exec "AsyncRun -raw stack exec -- ghc % && ./%<"
         " exec "AsyncRun -raw stack %"
         exec "rightbelow copen ".quickfix_height
     elseif &filetype == 'tex'
@@ -934,3 +936,12 @@ nnoremap gz :!zeal "<cword>"&<CR><CR>
 " let g:python3_host_prog = '$HOME/.pyenv/versions/data376_YCM/bin/python'
 " let g:ycm_auto_trigger=1
 " let g:ycm_seed_identifiers_with_syntax = 1
+
+
+"leetcode
+nnoremap <leader>ll :LeetCodeList<cr>
+nnoremap <leader>lt :LeetCodeTest<cr>
+nnoremap <leader>ls :LeetCodeSubmit<cr>
+nnoremap <leader>li :LeetCodeSignIn<cr>
+let g:leetcode_solution_filetype = 'python'
+let g:leetcode_browser = 'chrome'
