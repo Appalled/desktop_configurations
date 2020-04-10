@@ -896,17 +896,9 @@ func! CompileRunGcc()
         elseif search("set_trace()")
             exec "!python %"
         else
-            exec "AsyncRun -raw pytype % && python %"
+            exec "AsyncRun -mode=term -pos=bottom -focus=0 -name=123 -rows=".quickfix_height." pytype % && python %"
+            " exec "AsyncRun -raw pytype % && python %"
             " exec "AsyncRun -raw mypy % && python %"
-            " exec "AsyncRun -raw python %"
-            "在右边开启quickfix窗口
-            " exec "rightbelow copen 7"
-            exec "rightbelow copen ".quickfix_height
-            " exec "copen"
-            exec "wincmd p"
-            " exec "vertical rightbelow copen 75"
-            " " exec "copen"
-            " exec "wincmd p"
         endif
     elseif &filetype == 'c'
         " exec "AsyncRun -raw LC_ALL=C gcc % -o %< -Wall && %< "
