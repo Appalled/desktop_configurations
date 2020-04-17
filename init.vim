@@ -35,6 +35,7 @@ Plug 'luochen1990/rainbow'            " rainbow paranthesis
 Plug 'sheerun/vim-polyglot'           " syntax hilight for multi languages
 Plug 'neovimhaskell/haskell-vim'      " syntax for haskell
 Plug 'tmhedberg/simpylfold'
+" Plug 'pseewald/vim-anyfold'
 Plug 'Yggdroot/indentLine'            " show indentation lines
 Plug 'google/vim-searchindex'         " add number of found matching search items
 Plug 'junegunn/vim-peekaboo'          " register preview
@@ -77,6 +78,7 @@ Plug 'AndrewRadev/splitjoin.vim'        " split and join lines
 Plug 'terryma/vim-multiple-cursors'     " vim-multiple-cursors
 Plug 'chiel92/vim-autoformat'           " autoformat
 Plug 'brglng/vim-im-select'             " input method
+Plug 'tmux-plugins/vim-tmux-focus-events' " auto select im in tmux
 Plug 'farmergreg/vim-lastplace'         " open files at the last edited place
 Plug 'kana/vim-repeat'                  " repead by dot
 Plug 'mjbrownie/swapit'                 " swith between true and false combined with speeddating
@@ -90,6 +92,7 @@ Plug 'machakann/vim-textobj-delimited'
 Plug 'machakann/vim-sandwich'           " make sandwiches
 Plug 'machakann/vim-swap'               " quick swap in tuples
 Plug 'tpope/vim-surround'               " handle surrunds
+Plug 'michaeljsmith/vim-indent-object'  " regard indent as text object
 
 Plug 'jalvesaq/nvim-r'                  " R
 Plug 'jeetsukumaran/vim-pythonsense'    " handle python syntax obj
@@ -100,7 +103,8 @@ Plug 'dhruvasagar/vim-table-mode'       "edit tables
 Plug 'nathangrigg/vim-beancount'        " beancount
 
 " ================= Exec ================== "
-Plug 'skywind3000/asyncrun.vim'         " async run scipts
+Plug 'skywind3000/asyncrun.vim'         " async run scripts
+Plug 'skywind3000/asynctasks.vim'       " async run tasks
 Plug 'KabbAmine/zeavim.vim'             " doc for all
 Plug 'iamcco/markdown-preview.nvim',    { 'do': 'cd app & yarn install' } " markdown preview
 Plug 'kristijanhusak/vim-carbon-now-sh' " lit code screenshots
@@ -619,6 +623,8 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
 noremap <leader>e :Defx `expand('%:p:h')` -search=`expand('%:p')`  -split=vertical -winwidth=50 -direction=botright -toggle <CR>
+" show hidden files
+noremap <leader>E :Defx -show-ignored-files `expand('%:p:h')` -search=`expand('%:p')`  -split=vertical -winwidth=50 -direction=botright -toggle <CR>
 " noremap <leader>e :Defx `expand('%:p:h')` -search=`expand('%:p')`  -split=vertical -winwidth=100 -direction=topleft -toggle <CR>
 
 " defx config
@@ -760,6 +766,18 @@ set nofoldenable    " disable folding
 nnoremap <space> za
 vnoremap <space> zf
 
+" " anyfold
+" autocmd Filetype * AnyFoldActivate
+" let g:anyfold_fold_comments=1
+" set foldlevel=0
+" hi Folded term=NONE
+" syntax on
+"
+" colorscheme gruvbox
+" highlight Normal guibg=NONE ctermbg=None
+" set termguicolors                                       " Opaque Background
+
+
 function! Zoom ()
     " check if is the zoomed state (tabnumber > 1 && window == 1)
     if tabpagenr('$') > 1 && tabpagewinnr(tabpagenr(), '$') == 1
@@ -857,7 +875,10 @@ nmap <Leader>cd  <Plug>(coc-codelens-action)
 "autoformat
 noremap <F3> :Autoformat<CR>
 let g:formatterpath = ['python', 'black']
-autocmd FileType vim,tex,rmarkdown,rmd,markdown,todo,yaml,yml let b:autoformat_autoindent=0
+
+" disable indent for AsyncTask configuration
+au BufRead,BufNewFile *.tasks    setfiletype tasks
+autocmd FileType vim,tex,rmarkdown,rmd,markdown,todo,yaml,yml,cfg,tasks,dosini let b:autoformat_autoindent=0
 au BufWrite * :Autoformat
 
 "vim-table-mode
@@ -881,7 +902,7 @@ inoreabbrev <expr> __
 vnoremap <F8> :CarbonNowSh<CR>
 
 "python
-nnoremap <silent> <Leader>r :call CompileRunGcc()<cr>
+" nnoremap <silent> <Leader>r :call CompileRunGcc()<cr>
 
 func! CompileRunGcc()
     exec "w"
@@ -922,6 +943,16 @@ func! CompileRunGcc()
     endif
 
 endfunc
+
+" asynctasks
+let g:asyncrun_open=6
+let g:asynctasks_term_pos = 'bottom'
+let g:asynctasks_term_reuse = 1
+let g:asynctasks_term_focus = 0
+let g:asynctasks_term_rows = float2nr(winheight("%")/2.618)
+nnoremap <silent> <Leader>r :AsyncTask file-run<cr>
+nnoremap <silent> <Leader>c :AsyncTask file-check<cr>
+nnoremap <silent> <Leader>T :AsyncTaskFzf <cr>
 
 "zeal map
 nnoremap gz :!zeal "<cword>"&<CR><CR>

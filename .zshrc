@@ -7,11 +7,11 @@ export PATH=$HOME/bin:/usr/local/bin:$PATH
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 # # v2ray
-# export ALL_PROXY=socks5://127.0.0.1:10808
+export ALL_PROXY=socks5://127.0.0.1:10808
 # # ssrr-local
 # export https_PROXY=socks5://127.0.0.1:10802
 # export http_PROXY=socks5://127.0.0.1:10802
-export ALL_PROXY=socks5://127.0.0.1:10802
+# export ALL_PROXY=socks5://127.0.0.1:10802
 # eval $(thefuck --alias)
 # export TERM=screen-256color
 

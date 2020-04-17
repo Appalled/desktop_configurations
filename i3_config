@@ -235,7 +235,7 @@ gaps outer 2
 
 exec_always --no-startup-id "picom -b --config ~/.config/compton.conf"
 # exec "sh ~/.fehbg"
-exec --no-startup-id "feh --randomize --bg-fill ~/Pictures/*"
+exec --no-startup-id "feh ~/Picture/* --randomize --bg-fill "
 exec --no-startup-id "fcitx"
 exec --no-startup-id "xfce4-power-manager"
 exec --no-startup-id "seafile-applet"
