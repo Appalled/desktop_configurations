@@ -35,7 +35,6 @@ Plug 'luochen1990/rainbow'            " rainbow paranthesis
 Plug 'sheerun/vim-polyglot'           " syntax hilight for multi languages
 Plug 'neovimhaskell/haskell-vim'      " syntax for haskell
 Plug 'tmhedberg/simpylfold'
-" Plug 'pseewald/vim-anyfold'
 Plug 'Yggdroot/indentLine'            " show indentation lines
 Plug 'google/vim-searchindex'         " add number of found matching search items
 Plug 'junegunn/vim-peekaboo'          " register preview
@@ -47,6 +46,8 @@ Plug 'numirias/semshi',               {'do': ':UpdateRemotePlugins'}
 Plug 'liuchengxu/vista.vim'           "display structure of context
 Plug 'markonm/traces.vim'             "highlight and live preview for substitute and smagic
 Plug 'neovimhaskell/haskell-vim'      "highlight of haskell
+Plug 'godlygeek/tabular'            "markdown
+Plug 'plasticboy/vim-markdown'      "markdown extension
 
 " ================= Move ================== "
 Plug 'easymotion/vim-easymotion'
@@ -75,7 +76,8 @@ Plug 'tpope/vim-speeddating'            " edit dating
 Plug 'tpope/vim-unimpaired'             " shortcust using pairs
 Plug 'tpope/vim-abolish'                " substitution
 Plug 'AndrewRadev/splitjoin.vim'        " split and join lines
-Plug 'terryma/vim-multiple-cursors'     " vim-multiple-cursors
+" Plug 'terryma/vim-multiple-cursors'     " vim-multiple-cursors
+Plug 'mg979/vim-visual-multi', {'branch': 'master'}  " multiple cursor
 Plug 'chiel92/vim-autoformat'           " autoformat
 Plug 'brglng/vim-im-select'             " input method
 Plug 'tmux-plugins/vim-tmux-focus-events' " auto select im in tmux
@@ -97,6 +99,7 @@ Plug 'michaeljsmith/vim-indent-object'  " regard indent as text object
 Plug 'jalvesaq/nvim-r'                  " R
 Plug 'jeetsukumaran/vim-pythonsense'    " handle python syntax obj
 Plug 'chrisbra/csv.vim'                 " csv
+Plug 'dkarter/bullets.vim'              " markdown
 Plug 'hotoo/pangu.vim'                  " Chinese
 Plug 'wellle/tmux-complete.vim'         " complete words from a tmux panes
 Plug 'dhruvasagar/vim-table-mode'       "edit tables
@@ -463,7 +466,7 @@ endif
 " ======================== Filetype-Specific Configurations ============================= "
 
 " Markdown
-autocmd FileType markdown setlocal shiftwidth=2 tabstop=2 softtabstop=2
+" autocmd FileType markdown setlocal shiftwidth=2 tabstop=2 softtabstop=2
 autocmd FileType markdown set spell
 
 " config files
@@ -848,6 +851,14 @@ let R_complete = 1
 let R_show_args = 1
 let R_openhtml=1
 let R_latexcmd = 'xelatex'
+
+" Bullets.vim for item list
+let g:bullets_enabled_file_types = [
+    \ 'markdown',
+    \ 'text',
+    \ 'gitcommit',
+    \ 'scratch'
+    \]
 
 " csv
 aug CSV_Editing
