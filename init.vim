@@ -24,10 +24,14 @@ call plug#begin('~/.config/nvim/plugged')
 
 " ================= Display ================== "
 Plug 'morhetz/gruvbox'
+Plug 'sainnhe/gruvbox-material'
 Plug 'junegunn/seoul256.vim'
 Plug 'fatih/molokai'
+
 Plug 'itchyny/lightline.vim'          " lightline
 Plug 'maximbaz/lightline-ale'         "lightline ale
+Plug 'sainnhe/artify.vim'             "change font disply
+Plug 'rmolin88/pomodoro.vim'          "pomodoro timer
 Plug 'romainl/vim-cool'               " disable hl until another search is performed
 Plug 'psliwka/vim-smoothie'           " some very smooth ass scrolling
 Plug 'ryanoasis/vim-devicons'         " pretty icons everywhere
@@ -119,8 +123,11 @@ call plug#end()
 
 
 " ==================== general config ======================== "
-
-colorscheme gruvbox
+" set background=dark
+let g:gruvbox_material_background = 'medium'
+let g:gruvbox_material_transparent_background=1
+colorscheme gruvbox-material
+" colorscheme gruvbox
 highlight Normal guibg=NONE ctermbg=None
 set termguicolors                                       " Opaque Background
 set mouse=a                                             " enable mouse scrolling
@@ -151,8 +158,6 @@ set nofoldenable                                        " disable folding
 
 
 " " Coloring
-" let g:material_style='molokai'
-" set background=dark
 let g:airline_theme='gruvbox'
 highlight Pmenu guibg='00010a' guifg=white              " popup menu colors
 highlight Comment gui=bold                              " bold comments
@@ -222,18 +227,44 @@ endif
 
 " ======================== Plugin Configurations ======================== "
 
+"{{{pomodoro.vim
+let g:Pomodoro_Status = 0
+function! Toggle_Pomodoro()
+  if g:Pomodoro_Status == 0
+    let g:Pomodoro_Status = 1
+    execute 'PomodoroStart'
+  elseif g:Pomodoro_Status == 1
+    let g:Pomodoro_Status = 0
+    execute 'PomodoroStop'
+  endif
+endfunction
+let g:pomodoro_time_work = 25
+let g:pomodoro_time_slack = 5
+nnoremap <silent> <leader><space>p :<c-u>call Toggle_Pomodoro()<cr>
+"}}}
+
+function! PomodoroStatus() abort"{{{
+  if pomo#remaining_time() ==# '0'
+    return ""
+    " return "0m"
+  else
+    return pomo#remaining_time()."m"
+  endif
+endfunction"}}}
+
 " Add diagnostic info for https://github.com/itchyny/lightline.vim
 function! CocCurrentFunction()
     return get(b:, 'coc_current_function', '')
 endfunction
 
 "lightline
+" \ 'colorscheme': 'ayu_mirage',
 let g:lightline = {
-      \ 'colorscheme': 'ayu_mirage',
+      \ 'colorscheme': 'gruvbox_material',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste', 'gitbranch'],
       \             [ 'cocstatus' ] ],
-      \   'right': [ [ 'readonly', 'filename' ], [ 'linter_errors', 'linter_warnings' ] ]
+      \   'right': [ [ 'readonly', 'filename' ], [ 'pomodoro','linter_errors', 'linter_warnings' ] ]
       \ },
       \ 'inactive': {
       \   'right': [ [ 'readonly', 'filename'  ] ]
@@ -244,7 +275,8 @@ let g:lightline = {
       \   'fileformat': 'LightlineFileformat',
       \   'filetype': 'LightlineFiletype',
       \   'filename': 'LightlineFilename',
-      \   'cocstatus' : 'LightLineCoc'
+      \   'cocstatus' : 'LightLineCoc',
+      \ 'pomodoro': 'PomodoroStatus',
       \ },
       \ 'component_expand':{
       \  'linter_checking': 'lightline#ale#checking',
@@ -273,9 +305,10 @@ let g:lightline = {
         \ "\<C-s>": 'SB',
         \ 't': 'T',
         \ },
+        \'separator':{'left':"\ue0b8",'right':"\ue0ba"},
+        \'subseparator':{'left':"\ue0b9",'right':"\ue0bb"},
+        \'tabline_separator':{'left':"\ue0bc",'right':"\ue0be"},
       \ }
-
-
 
 function! LightlineReadonly()
   return &readonly && &filetype !~# '\v(help|vimfiler|unite)' ? 'RO' : ''
@@ -304,6 +337,8 @@ function! LightLineCoc()
     endif
     return trim(coc#status())
 endfunction
+
+
 
 
 
@@ -467,7 +502,8 @@ endif
 
 " Markdown
 " autocmd FileType markdown setlocal shiftwidth=2 tabstop=2 softtabstop=2
-autocmd FileType markdown set spell
+" autocmd FileType markdown set spell
+let g:mkdp_refresh_slow=1
 
 " config files
 au BufReadPost,BufNewFile */polybar/* set filetype=dosini
@@ -961,6 +997,7 @@ let g:asynctasks_term_pos = 'bottom'
 let g:asynctasks_term_reuse = 1
 let g:asynctasks_term_focus = 0
 let g:asynctasks_term_rows = float2nr(winheight("%")/2.618)
+nnoremap <silent> <Leader>m :AsyncTask file-build<cr>
 nnoremap <silent> <Leader>r :AsyncTask file-run<cr>
 nnoremap <silent> <Leader>c :AsyncTask file-check<cr>
 nnoremap <silent> <Leader>T :AsyncTaskFzf <cr>
