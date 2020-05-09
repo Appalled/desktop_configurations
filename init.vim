@@ -240,7 +240,7 @@ function! Toggle_Pomodoro()
 endfunction
 let g:pomodoro_time_work = 25
 let g:pomodoro_time_slack = 5
-nnoremap <silent> <leader><space>p :<c-u>call Toggle_Pomodoro()<cr>
+nnoremap <silent> <leader>pt :<c-u>call Toggle_Pomodoro()<cr>
 "}}}
 
 function! PomodoroStatus() abort"{{{
@@ -420,11 +420,11 @@ let g:coc_global_extensions = [
             \'coc-lists',
             \'coc-xml',
             \'coc-syntax',
-            \'coc-sql',
             \'coc-r-lsp',
             \'coc-snippets',
             \]
 
+            " \'coc-sql',
             " \'coc-ultisnips',
             " \'coc-neosnippet',
             " \'coc-ccls',
