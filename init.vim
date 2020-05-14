@@ -2,8 +2,6 @@
 
 let vimplug_exists=expand('~/.config/nvim/autoload/plug.vim')
 
-" let g:vim_bootstrap_langs = "c"
-" let g:vim_bootstrap_editor = "nvim"               " nvim or vim
 
 if !filereadable(vimplug_exists)
     if !executable("curl")
@@ -28,30 +26,30 @@ Plug 'sainnhe/gruvbox-material'
 Plug 'junegunn/seoul256.vim'
 Plug 'fatih/molokai'
 
-Plug 'itchyny/lightline.vim'          " lightline
-Plug 'maximbaz/lightline-ale'         "lightline ale
-Plug 'sainnhe/artify.vim'             "change font disply
-Plug 'rmolin88/pomodoro.vim'          "pomodoro timer
-Plug 'romainl/vim-cool'               " disable hl until another search is performed
-Plug 'psliwka/vim-smoothie'           " some very smooth ass scrolling
-Plug 'ryanoasis/vim-devicons'         " pretty icons everywhere
-Plug 'luochen1990/rainbow'            " rainbow paranthesis
-Plug 'sheerun/vim-polyglot'           " syntax hilight for multi languages
-Plug 'neovimhaskell/haskell-vim'      " syntax for haskell
+Plug 'itchyny/lightline.vim'      " lightline
+Plug 'maximbaz/lightline-ale'     " lightline ale
+Plug 'sainnhe/artify.vim'         " change font disply
+Plug 'rmolin88/pomodoro.vim'      " pomodoro timer
+Plug 'romainl/vim-cool'           " disable hl until another search is performed
+Plug 'psliwka/vim-smoothie'       " some very smooth ass scrolling
+Plug 'ryanoasis/vim-devicons'     " pretty icons everywhere
+Plug 'luochen1990/rainbow'        " rainbow paranthesis
+Plug 'sheerun/vim-polyglot'       " syntax hilight for multi languages
+Plug 'neovimhaskell/haskell-vim'  " syntax for haskell
 Plug 'tmhedberg/simpylfold'
-Plug 'Yggdroot/indentLine'            " show indentation lines
-Plug 'google/vim-searchindex'         " add number of found matching search items
-Plug 'junegunn/vim-peekaboo'          " register preview
+Plug 'Yggdroot/indentLine'        " show indentation lines
+Plug 'google/vim-searchindex'     " add number of found matching search items
+Plug 'junegunn/vim-peekaboo'      " register preview
 Plug 'wellle/visual-split.vim'
-Plug 'lambdalisue/vim-fullscreen'     " fullscreen
-Plug 'junegunn/goyo.vim'              " zen mode
+Plug 'lambdalisue/vim-fullscreen' " fullscreen
+Plug 'junegunn/goyo.vim'          " zen mode
 " Plug 'junegunn/limelight.vim'
-Plug 'numirias/semshi',               {'do': ':UpdateRemotePlugins'}
-Plug 'liuchengxu/vista.vim'           "display structure of context
-Plug 'markonm/traces.vim'             "highlight and live preview for substitute and smagic
-Plug 'neovimhaskell/haskell-vim'      "highlight of haskell
-Plug 'godlygeek/tabular'            "markdown
-Plug 'plasticboy/vim-markdown'      "markdown extension
+Plug 'numirias/semshi',           {'do': ':UpdateRemotePlugins'}
+Plug 'liuchengxu/vista.vim'       "display structure of context
+Plug 'markonm/traces.vim'         "highlight and live preview for substitute and smagic
+Plug 'neovimhaskell/haskell-vim'  "highlight of haskell
+Plug 'godlygeek/tabular'          "markdown
+Plug 'plasticboy/vim-markdown'    "markdown extension
 
 " ================= Move ================== "
 Plug 'easymotion/vim-easymotion'
@@ -80,7 +78,6 @@ Plug 'tpope/vim-speeddating'            " edit dating
 Plug 'tpope/vim-unimpaired'             " shortcust using pairs
 Plug 'tpope/vim-abolish'                " substitution
 Plug 'AndrewRadev/splitjoin.vim'        " split and join lines
-" Plug 'terryma/vim-multiple-cursors'     " vim-multiple-cursors
 Plug 'mg979/vim-visual-multi', {'branch': 'master'}  " multiple cursor
 Plug 'chiel92/vim-autoformat'           " autoformat
 Plug 'brglng/vim-im-select'             " input method
@@ -106,7 +103,7 @@ Plug 'chrisbra/csv.vim'                 " csv
 Plug 'dkarter/bullets.vim'              " markdown
 Plug 'hotoo/pangu.vim'                  " Chinese
 Plug 'wellle/tmux-complete.vim'         " complete words from a tmux panes
-Plug 'dhruvasagar/vim-table-mode'       "edit tables
+Plug 'dhruvasagar/vim-table-mode'       " edit tables
 Plug 'nathangrigg/vim-beancount'        " beancount
 
 " ================= Exec ================== "
@@ -191,11 +188,11 @@ set re=1
 
 " reg, breakline and bell
 set magic
-" Linebreak on 500 characters
+" linebreak on 500 characters
 set lbr
 " set tw=500 和autoformat冲突
 
-"edit experiences tricks
+" edit experiences tricks
 
 " Return to last edit position when opening files (You want this!)
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
@@ -258,6 +255,7 @@ function! CocCurrentFunction()
 endfunction
 
 "lightline
+      " \   'right': [ [ 'readonly', 'filename'  ] ]
 " \ 'colorscheme': 'ayu_mirage',
 let g:lightline = {
       \ 'colorscheme': 'gruvbox_material',
@@ -267,7 +265,7 @@ let g:lightline = {
       \   'right': [ [ 'readonly', 'filename' ], [ 'pomodoro','linter_errors', 'linter_warnings' ] ]
       \ },
       \ 'inactive': {
-      \   'right': [ [ 'readonly', 'filename'  ] ]
+      \   'right': [ [ 'readonly','filetype' ] ]
       \ },
       \ 'component_function': {
       \   'gitbranch': 'FugitiveHead',
@@ -276,7 +274,7 @@ let g:lightline = {
       \   'filetype': 'LightlineFiletype',
       \   'filename': 'LightlineFilename',
       \   'cocstatus' : 'LightLineCoc',
-      \ 'pomodoro': 'PomodoroStatus',
+      \   'pomodoro': 'PomodoroStatus',
       \ },
       \ 'component_expand':{
       \  'linter_checking': 'lightline#ale#checking',
@@ -311,7 +309,7 @@ let g:lightline = {
       \ }
 
 function! LightlineReadonly()
-  return &readonly && &filetype !~# '\v(help|vimfiler|unite)' ? 'RO' : ''
+  return &readonly && &filetype !~# '\v(help|vimfiler|unite|vista|defx)' ? 'RO' : ''
 endfunction
 
 function! LightlineFileformat()
@@ -327,6 +325,8 @@ let g:vimfiler_force_overwrite_statusline = 0
 
 function! LightlineFilename()
   let filename = expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
+  let filename = substitute(filename, '__vista__','vista','')
+  let filename = substitute(filename, '\[defx\] defx-0','defx','')
   let modified = &modified ? ' +' : ''
   return filename . modified
 endfunction
