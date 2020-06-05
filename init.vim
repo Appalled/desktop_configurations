@@ -237,7 +237,7 @@ function! Toggle_Pomodoro()
 endfunction
 let g:pomodoro_time_work = 25
 let g:pomodoro_time_slack = 5
-nnoremap <silent> <leader>pt :<c-u>call Toggle_Pomodoro()<cr>
+nnoremap <silent> <leader>tp :<c-u>call Toggle_Pomodoro()<cr>
 "}}}
 
 function! PomodoroStatus() abort"{{{
@@ -422,6 +422,7 @@ let g:coc_global_extensions = [
             \'coc-syntax',
             \'coc-r-lsp',
             \'coc-snippets',
+            \'coc-clangd',
             \]
 
             " \'coc-sql',
@@ -835,7 +836,7 @@ endfunction
 
 nmap <leader>z :call Zoom()<CR>
 set previewheight=3
-nmap <leader>h :pedit <CR>
+nmap <leader>h zt:pedit <CR>
 map <leader>H :pc <CR>
 
 let g:semshi#simplify_markup = v:true
@@ -928,6 +929,7 @@ au BufRead,BufNewFile *.tasks    setfiletype tasks
 autocmd FileType vim,tex,rmarkdown,rmd,markdown,todo,yaml,yml,cfg,tasks,dosini let b:autoformat_autoindent=0
 au BufWrite * :Autoformat
 
+
 "vim-table-mode
 
 function! s:isAtStartOfLine(mapping)
@@ -993,6 +995,7 @@ endfunc
 
 " asynctasks
 let g:asyncrun_open=6
+" let g:asynctasks_term_pos = 'tab'
 let g:asynctasks_term_pos = 'bottom'
 let g:asynctasks_term_reuse = 1
 let g:asynctasks_term_focus = 0

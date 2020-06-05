@@ -33,6 +33,7 @@
     "diagnostic.messageTarget": "float",
     "signature.target": "float",
     "coc.preferences.hoverTarget": "float",
+    "python.jediEnabled":false,
     "languageserver": {
         "haskell": {
             "command": "hie-wrapper",
