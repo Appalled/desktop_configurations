@@ -13,7 +13,7 @@ export ALL_PROXY=socks5://127.0.0.1:10808
 # export https_PROXY=socks5://127.0.0.1:10802
 # export http_PROXY=socks5://127.0.0.1:10802
 # export ALL_PROXY=socks5://127.0.0.1:10802
-# eval $(thefuck --alias)
+eval $(thefuck --alias)
 # export TERM=screen-256color
 
 # python virtualenv
@@ -213,6 +213,17 @@ cf() {
     fi
 }
 
+proxy () {
+    export ALL_PROXY="socks5://127.0.0.1:10808"
+    export all_proxy="socks5://127.0.0.1:10808"
+    curl ip.sb
+}
+
+noproxy () {
+    unset ALL_PROXY
+    unset all_proxy
+    curl ip.sb
+}
 
 # command prompt
 eval "$(starship init zsh)"
@@ -224,3 +235,4 @@ eval "$(pyenv virtualenv-init -)"
 if [[ -n $VIRTUAL_ENV && -e "${VIRTUAL_ENV}/bin/activate" ]]; then
     source "${VIRTUAL_ENV}/bin/activate"
 fi
+

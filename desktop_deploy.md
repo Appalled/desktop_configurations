@@ -5,6 +5,8 @@
     * init.vim
   * ~/.config/i3
     link from config to i3_config
+  * git clone https://github.com/vivien/i3blocks-contrib ~/.config/i3blocks
+  * link ~/.i3blocks.conf
   * ~/
     * .zshrc
     * .tmux.conf
@@ -17,6 +19,6 @@
 5. intall pyenv nodejs and r
 6.set hwclock as local time:
 sudo timedatectl set-local-rtc 1
-7. set data analysis environment:
+6. set data analysis environment:
   * run "sudo pacman -S tk" before install python virtualenv and matplotlib for
       tk backend of ploting

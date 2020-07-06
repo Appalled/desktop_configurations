@@ -114,6 +114,8 @@ Plug 'iamcco/markdown-preview.nvim',    { 'do': 'cd app & yarn install' } " mark
 Plug 'kristijanhusak/vim-carbon-now-sh' " lit code screenshots
 Plug 'tpope/vim-fugitive'               " git support
 Plug 'ianding1/leetcode.vim'            " leetcode
+Plug 'tpope/vim-eunuch'                 " sudo write
+Plug 'itchyny/calendar.vim'             " calendar
 
 call plug#end()
 
@@ -121,8 +123,10 @@ call plug#end()
 
 " ==================== general config ======================== "
 " set background=dark
-let g:gruvbox_material_background = 'medium'
+let g:gruvbox_material_background = 'hard'
 let g:gruvbox_material_transparent_background=1
+let g:gruvbox_material_enable_italic = 1
+let g:gruvbox_material_disable_italic_comment = 1
 colorscheme gruvbox-material
 " colorscheme gruvbox
 highlight Normal guibg=NONE ctermbg=None
@@ -155,7 +159,6 @@ set nofoldenable                                        " disable folding
 
 
 " " Coloring
-let g:airline_theme='gruvbox'
 highlight Pmenu guibg='00010a' guifg=white              " popup menu colors
 highlight Comment gui=bold                              " bold comments
 highlight Normal gui=none
@@ -898,11 +901,15 @@ let g:bullets_enabled_file_types = [
     \]
 
 " csv
-aug CSV_Editing
-    au!
-    au BufRead,BufWritePost *.csv :%ArrangeColumn
-    au BufWritePre *.csv :%UnArrangeColumn
-aug end
+" aug CSV_Editing
+"     au!
+"     au BufRead,BufWritePost *.csv :%!ArrangeColumn
+"     au BufWritePre *.csv :%UnArrangeColumn
+" aug end
+let g:csv_autocmd_arrange = 0
+let g:csv_autocmd_arrange_size = 1024*1024
+let g:csv_start = 1
+let g:csv_end = 200
 
 
 "AutoPairs
@@ -926,7 +933,7 @@ let g:formatterpath = ['python', 'black']
 
 " disable indent for AsyncTask configuration
 au BufRead,BufNewFile *.tasks    setfiletype tasks
-autocmd FileType vim,tex,rmarkdown,rmd,markdown,todo,yaml,yml,cfg,tasks,dosini let b:autoformat_autoindent=0
+autocmd FileType vim,tex,rmarkdown,rmd,markdown,todo,yaml,yml,cfg,tasks,dosini,conf let b:autoformat_autoindent=0
 au BufWrite * :Autoformat
 
 
@@ -1019,3 +1026,7 @@ nnoremap <leader>ls :LeetCodeSubmit<cr>
 nnoremap <leader>li :LeetCodeSignIn<cr>
 let g:leetcode_solution_filetype = 'python'
 let g:leetcode_browser = 'chrome'
+
+"calendar
+let g:calendar_google_calendar = 0
+let g:calendar_google_task = 0
