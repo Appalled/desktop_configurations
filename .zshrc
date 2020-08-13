@@ -24,6 +24,7 @@ eval $(thefuck --alias)
 # editor
 export EDITOR='nvim'
 export VISUAL='nvim'
+alias vim='nvim'
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,

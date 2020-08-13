@@ -105,6 +105,7 @@ Plug 'hotoo/pangu.vim'                  " Chinese
 Plug 'wellle/tmux-complete.vim'         " complete words from a tmux panes
 Plug 'dhruvasagar/vim-table-mode'       " edit tables
 Plug 'nathangrigg/vim-beancount'        " beancount
+Plug 'vimwiki/vimwiki'                  " vimwiki
 
 " ================= Exec ================== "
 Plug 'skywind3000/asyncrun.vim'         " async run scripts
@@ -789,6 +790,8 @@ nmap <leader>V :Vista finder<CR>
 let g:vista#renderer#enable_icon = 1
 let g:vista#renderer#enable_icon = 1
 let g:vista_sidebar_position = 'vertical topleft'
+" let g:vista_executive_for = {'vimwiki': 'markdown', }
+let g:vista_executive_for = {'vimwiki': 'toc', }
 
 " ======================== Display ====================== "
 nmap <leader>g :Goyo<CR>
@@ -894,11 +897,16 @@ let R_latexcmd = 'xelatex'
 
 " Bullets.vim for item list
 let g:bullets_enabled_file_types = [
+    \ 'vimwiki',
     \ 'markdown',
     \ 'text',
     \ 'gitcommit',
     \ 'scratch'
     \]
+let g:bullets_pad_right = 0
+
+let g:bullets_outline_levels = ['num','std*',
+ \ 'std+', 'std-']
 
 " csv
 " aug CSV_Editing
@@ -933,7 +941,7 @@ let g:formatterpath = ['python', 'black']
 
 " disable indent for AsyncTask configuration
 au BufRead,BufNewFile *.tasks    setfiletype tasks
-autocmd FileType vim,tex,rmarkdown,rmd,markdown,todo,yaml,yml,cfg,tasks,dosini,conf let b:autoformat_autoindent=0
+autocmd FileType vim,tex,rmarkdown,rmd,markdown,todo,yaml,yml,cfg,tasks,dosini,conf,vimwiki let b:autoformat_autoindent=0
 au BufWrite * :Autoformat
 
 
@@ -952,6 +960,13 @@ inoreabbrev <expr> <bar><bar>
 inoreabbrev <expr> __
           \ <SID>isAtStartOfLine('__') ?
           \ '<c-o>:silent! TableModeDisable<cr>' : '__'
+
+" vimwiki
+let g:vimwiki_global_ext = 0
+let g:vimwiki_list = [{'path': '~/vimwiki/',
+                      \ 'syntax': 'markdown', 'ext': '.md'}]
+
+
 
 " ======================== Exec ====================== "
 " carbon sh now
