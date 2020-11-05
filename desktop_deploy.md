@@ -17,8 +17,12 @@
   * tmux
   * i3
 5. intall pyenv nodejs and r
-6.set hwclock as local time:
+6. set hwclock as local time:
 sudo timedatectl set-local-rtc 1
-6. set data analysis environment:
+7. set data analysis environment:
   * run "sudo pacman -S tk" before install python virtualenv and matplotlib for
       tk backend of ploting
+8. haskell
+    * install ghcup-hs via curl
+    * install and set global ghc
+    * get ghcide from github and build via stack ( same ghc )

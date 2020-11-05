@@ -23,8 +23,8 @@ call plug#begin('~/.config/nvim/plugged')
 " ================= Display ================== "
 Plug 'morhetz/gruvbox'
 Plug 'sainnhe/gruvbox-material'
-Plug 'junegunn/seoul256.vim'
-Plug 'fatih/molokai'
+" Plug 'junegunn/seoul256.vim'
+" Plug 'fatih/molokai'
 
 Plug 'itchyny/lightline.vim'      " lightline
 Plug 'maximbaz/lightline-ale'     " lightline ale
@@ -50,6 +50,7 @@ Plug 'markonm/traces.vim'         "highlight and live preview for substitute and
 Plug 'neovimhaskell/haskell-vim'  "highlight of haskell
 Plug 'godlygeek/tabular'          "markdown
 Plug 'plasticboy/vim-markdown'    "markdown extension
+Plug 'arzg/vim-rust-syntax-ext'   "rust highlight extension
 
 " ================= Move ================== "
 Plug 'easymotion/vim-easymotion'
@@ -75,6 +76,7 @@ Plug 'junegunn/vim-easy-align'          " align
 Plug 'tomtom/tcomment_vim'              " comment
 Plug 'jiangmiao/auto-pairs'             " auto pairs
 Plug 'tpope/vim-speeddating'            " edit dating
+Plug 'mjbrownie/swapit'                 " swith between true and false combined with speeddating
 Plug 'tpope/vim-unimpaired'             " shortcust using pairs
 Plug 'tpope/vim-abolish'                " substitution
 Plug 'AndrewRadev/splitjoin.vim'        " split and join lines
@@ -84,7 +86,6 @@ Plug 'brglng/vim-im-select'             " input method
 Plug 'tmux-plugins/vim-tmux-focus-events' " auto select im in tmux
 Plug 'farmergreg/vim-lastplace'         " open files at the last edited place
 Plug 'kana/vim-repeat'                  " repead by dot
-Plug 'mjbrownie/swapit'                 " swith between true and false combined with speeddating
 
 Plug 'wellle/targets.vim'
 Plug 'kana/vim-textobj-user'
@@ -139,6 +140,7 @@ set mouse=a                                             " enable mouse scrolling
 
 filetype plugin indent on                               " enable indentations
 set tabstop=4 softtabstop=4 shiftwidth=4 expandtab smarttab autoindent            " tab key actions
+autocmd FileType haskell setlocal shiftwidth=2 softtabstop=2 expandtab
 set incsearch ignorecase smartcase hlsearch             " highlight text while searching
 set list listchars=trail:»,tab:»-                       " use tab to navigate in list mode
 set fillchars+=vert:\▏                                  " requires a patched nerd font (try furaCode)
@@ -266,10 +268,10 @@ let g:lightline = {
       \ 'active': {
       \   'left': [ [ 'mode', 'paste', 'gitbranch'],
       \             [ 'cocstatus' ] ],
-      \   'right': [ [ 'readonly', 'filename' ], [ 'pomodoro','linter_errors', 'linter_warnings' ] ]
+      \   'right': [ [ 'readonly', 'filename' ], [ 'percent'], [ 'pomodoro','linter_errors', 'linter_warnings' ]  ]
       \ },
       \ 'inactive': {
-      \   'right': [ [ 'readonly','filetype' ] ]
+      \   'right': [ [ 'readonly', 'filetype' ], [ 'percent'] ]
       \ },
       \ 'component_function': {
       \   'gitbranch': 'FugitiveHead',
@@ -307,10 +309,10 @@ let g:lightline = {
         \ "\<C-s>": 'SB',
         \ 't': 'T',
         \ },
-        \'separator':{'left':"\ue0b8",'right':"\ue0ba"},
-        \'subseparator':{'left':"\ue0b9",'right':"\ue0bb"},
-        \'tabline_separator':{'left':"\ue0bc",'right':"\ue0be"},
       \ }
+        " \'separator':{'left':"\ue0b8",'right':"\ue0ba"},
+        " \'subseparator':{'left':"\ue0b9",'right':"\ue0bb"},
+        " \'tabline_separator':{'left':"\ue0bc",'right':"\ue0be"},
 
 function! LightlineReadonly()
   return &readonly && &filetype !~# '\v(help|vimfiler|unite|vista|defx)' ? 'RO' : ''
@@ -429,6 +431,7 @@ let g:coc_global_extensions = [
             \'coc-clangd',
             \]
 
+            " \'coc-rust-analyzer',
             " \'coc-sql',
             " \'coc-ultisnips',
             " \'coc-neosnippet',
@@ -792,6 +795,10 @@ let g:vista#renderer#enable_icon = 1
 let g:vista_sidebar_position = 'vertical topleft'
 " let g:vista_executive_for = {'vimwiki': 'markdown', }
 let g:vista_executive_for = {'vimwiki': 'toc', }
+let g:vista#renderer#enable_icon=v:false
+let g:vista_ctags_cmd = {
+      \ 'haskell': 'hasktags -x -o - -c',
+      \ }
 
 " ======================== Display ====================== "
 nmap <leader>g :Goyo<CR>
@@ -863,9 +870,9 @@ vnoremap <leader>p "+p
 vnoremap <leader>P "+P
 
 " for global rename
-" nmap <leader>rn <Plug>(coc-rename)
-" use Semshi to rename instead of coc
-nmap <silent> <leader>rn :Semshi rename<CR>
+nmap <leader>rn <Plug>(coc-rename)
+" use Semshi to rename python instead of coc
+autocmd FileType python nmap <silent> <leader>rn :Semshi rename<CR>
 
 " Easyalign
 " Start interactive EasyAlign in visual mode (e.g. vipga)
@@ -881,6 +888,13 @@ omap i, <Plug>(swap-textobject-i)
 xmap i, <Plug>(swap-textobject-i)
 omap a, <Plug>(swap-textobject-a)
 xmap a, <Plug>(swap-textobject-a)
+
+" try to define swap rule for haskell ->
+" let g:swap#rules = deepcopy(g:swap#default_rules)
+" let g:swap#rules += [{
+"   \   "delimiter": ['->'],
+"   \   "body": '\w*->\w',
+"   \ }]
 
 "switch between true and false combined with speeddating
 nmap <Plug>SwapItFallbackIncrement <Plug>SpeedDatingUp
@@ -908,6 +922,8 @@ let g:bullets_pad_right = 0
 let g:bullets_outline_levels = ['num','std*',
  \ 'std+', 'std-']
 
+let g:bullets_checkbox_markers = ' .oOX'
+
 " csv
 " aug CSV_Editing
 "     au!
@@ -922,6 +938,8 @@ let g:csv_end = 200
 
 "AutoPairs
 let g:AutoPairsFlyMode = 1
+let g:AutoPairs = {'(':')', '[':']', '{':'}',"'":"'",'"':'"', '`':'`'}
+au Filetype rust let b:AutoPairs = {'(':')', '[':']', '{':'}',"'":"'",'"':'"', '`':'`', '<':'>'}
 
 "input method
 " The input method for Normal mode (as defined by `xkbswitch -g` or `ibus engine`)
@@ -938,10 +956,17 @@ nmap <Leader>cd  <Plug>(coc-codelens-action)
 "autoformat
 noremap <F3> :Autoformat<CR>
 let g:formatterpath = ['python', 'black']
+let g:formatterpath = ['sql', 'pg_format']
+let g:formatters_haskell = ['my_haskell']
+let g:formatdef_my_haskell = '"ormolu"'
+let g:formatters_sql = ['my_sql_format']
+let g:formatdef_my_sql_format = '"pg_format --type-case 3 --wrap-limit 80 --function-case 1"'
 
 " disable indent for AsyncTask configuration
 au BufRead,BufNewFile *.tasks    setfiletype tasks
 autocmd FileType vim,tex,rmarkdown,rmd,markdown,todo,yaml,yml,cfg,tasks,dosini,conf,vimwiki let b:autoformat_autoindent=0
+autocmd FileType vim,tex,rmarkdown,rmd,markdown,todo,yaml,yml,cfg,tasks,dosini,conf,vimwiki let b:shiftwidth=4
+let b:autoformat_autoindent=0
 au BufWrite * :Autoformat
 
 
@@ -963,8 +988,9 @@ inoreabbrev <expr> __
 
 " vimwiki
 let g:vimwiki_global_ext = 0
-let g:vimwiki_list = [{'path': '~/vimwiki/',
-                      \ 'syntax': 'markdown', 'ext': '.md'}]
+let g:vimwiki_list = [{'path': '~/vimwiki/', 'custom_wiki2html': 'vimwiki_markdown', 'syntax': 'markdown', 'ext': '.md'},
+            \ {'path': '~/Document/Seafile/private/vimwiki2', 'custom_wiki2html': 'vimwiki_markdown', 'syntax': 'markdown', 'ext': '.md'}]
+
 
 
 
@@ -1028,7 +1054,9 @@ nnoremap <silent> <Leader>c :AsyncTask file-check<cr>
 nnoremap <silent> <Leader>T :AsyncTaskFzf <cr>
 
 "zeal map
-nnoremap gz :!zeal "<cword>"&<CR><CR>
+nnoremap gz :Zeavim "<cword>"&<CR><CR>
+let g:zv_keep_focus = 1
+" nnoremap gz :!zeal "<cword>"&<CR><CR>
 " let g:python3_host_prog = '$HOME/.pyenv/versions/data376_YCM/bin/python'
 " let g:ycm_auto_trigger=1
 " let g:ycm_seed_identifiers_with_syntax = 1
