@@ -1,0 +1,55 @@
+# general snippets
+snippet lamb "lambda d:d" Ai
+lambda ${1:d} : ${2:d}
+endsnippet
+
+# pandas
+## dataframe
+snippet asl "assign lambda" Ai
+assign(${1:row_name} = lambda ${2:d}: ${3:d})
+endsnippet
+
+snippet asg "just assign" Ai
+assign(${1:row_name} =  ${3:func})
+endsnippet
+
+snippet grpb "groupby list" Ai
+groupby([${1:elements}],as_index=${2:True}).${3:agg_func}
+endsnippet
+
+snippet mrg "merge" Ai
+merge(${1:df} ,on=[${2:}], how="${3:inner}")
+endsnippet
+
+snippet rdp "pd read csv with path" A
+pd.read_csv(os.path.join(${1:dir}, ${2:file_name}))
+endsnippet
+
+snippet drp "pd drop cols" Ai
+drop([${1:elements}], axis=${2:1})
+endsnippet
+
+## dot file
+snippet pdconf "pandas and plt config"
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import os
+import sys
+import pathlib
+${1:}
+
+plt.rcParams["font.sans-serif"] = ["Source Han Serif"]  # 用来正常显示中文标签
+plt.rcParams["axes.unicode_minus"] = False  # 用来正常显示负号
+pd.set_option("display.unicode.ambiguous_as_wide", True)
+pd.set_option("display.unicode.east_asian_width", True)
+pd.set_option("display.max_rows", 500)
+pd.set_option("display.max_columns", 500)
+pd.set_option("display.width", 200)
+pd.set_option("precision", 3)
+project_dir = pathlib.Path().absolute().parent.parent
+data_dir = os.path.join(project_dir, "data")
+raw_dir = os.path.join(data_dir, "raw")
+interm_dir = os.path.join(data_dir, "interm")
+processed_dir = os.path.join(data_dir, "processed")
+endsnippet

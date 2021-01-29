@@ -1,0 +1,71 @@
+snippet ss "select" A
+SELECT ${1}
+endsnippet
+
+snippet ff "f" A
+FROM ${1}
+endsnippet
+
+snippet ww "w" A
+WHERE ${1}
+endsnippet
+
+snippet gb "g" A
+GROUP BY ${1}
+endsnippet
+
+snippet lm "l" A
+LIMIT ${1:100}
+endsnippet
+
+snippet jo "join on" A
+JOIN ${1} ON ${2}
+endsnippet
+
+snippet lj "lj" A
+LEFT JOIN ${1} ON ${2}
+endsnippet
+
+snippet oo "o" A
+ORDER BY ${1:CREATED_AT DESC}
+endsnippet
+
+snippet hh "having" A
+HAVING ${1:condition}
+endsnippet
+
+snippet jeq "on ="
+${1:tb1}.${2:col} = ${3:tb1}.${2:col}
+${4}
+endsnippet
+
+snippet isn "is null"
+IS NULL
+endsnippet
+
+snippet inn "is not null"
+IS NOT NULL
+endsnippet
+
+snippet op "over partition by order by"
+OVER(PARTITION BY ${1:X} ORDER BY ${2:Y DESC})
+endsnippet
+
+snippet ua "union all"
+UNION ALL
+${1: }
+endsnippet
+
+snippet ad "agg distinct"
+${1:Agg_func}(DISTINCT ${2:X})
+endsnippet
+
+snippet bt "between upper and lower bound"
+${1:x} >= ${2:condition1}
+AND ${1:X} <= ${3:condition2}
+endsnippet
+
+snippet bta "between and"
+${1:x} BETWEEN ${2:condition1} AND ${3:condition2}
+endsnippet
+

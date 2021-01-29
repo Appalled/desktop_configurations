@@ -27,7 +27,7 @@ Plug 'sainnhe/gruvbox-material'
 " Plug 'fatih/molokai'
 
 Plug 'itchyny/lightline.vim'      " lightline
-Plug 'maximbaz/lightline-ale'     " lightline ale
+" Plug 'maximbaz/lightline-ale'     " lightline ale
 Plug 'sainnhe/artify.vim'         " change font disply
 Plug 'rmolin88/pomodoro.vim'      " pomodoro timer
 Plug 'romainl/vim-cool'           " disable hl until another search is performed
@@ -43,7 +43,6 @@ Plug 'junegunn/vim-peekaboo'      " register preview
 Plug 'wellle/visual-split.vim'
 Plug 'lambdalisue/vim-fullscreen' " fullscreen
 Plug 'junegunn/goyo.vim'          " zen mode
-" Plug 'junegunn/limelight.vim'
 Plug 'numirias/semshi',           {'do': ':UpdateRemotePlugins'}
 Plug 'liuchengxu/vista.vim'       "display structure of context
 Plug 'markonm/traces.vim'         "highlight and live preview for substitute and smagic
@@ -51,27 +50,24 @@ Plug 'neovimhaskell/haskell-vim'  "highlight of haskell
 Plug 'godlygeek/tabular'          "markdown
 Plug 'plasticboy/vim-markdown'    "markdown extension
 Plug 'arzg/vim-rust-syntax-ext'   "rust highlight extension
+Plug 'voldikss/vim-floaterm'      "float window
 
 " ================= Move ================== "
 Plug 'easymotion/vim-easymotion'
 Plug 'junegunn/fzf',    { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim' " fuzzy search integration
-if   has('nvim')        " defx
-    Plug 'Shougo/defx.nvim', { 'do': ':UpdateRemotePlugins' }
-else
-    Plug 'Shougo/defx.nvim'
-    Plug 'roxma/nvim-yarp'
-    Plug 'roxma/vim-hug-neovim-rpc'
-endif
+Plug 'tpope/vim-vinegar'              " another split file explore
 Plug 'takac/vim-hardtime'             " no jjjjkkkkk
+Plug 'jdhao/better-escape.vim'        "quick escape
 
 " ================= Edit ================== "
 Plug 'neoclide/coc.nvim',               {'branch': 'release'}
 " Plug 'valloric/youcompleteme'
 " Plug 'ervandew/supertab'
-Plug 'w0rp/ale'                         "linting
-" Plug 'SirVer/ultisnips'                 " snippets
-Plug 'honza/vim-snippets'               " actual snippets
+" Plug 'w0rp/ale'                         "linting
+Plug 'honza/vim-snippets'               " snippets tool
+Plug 'SirVer/ultisnips'                 " snippets source
+
 Plug 'junegunn/vim-easy-align'          " align
 Plug 'tomtom/tcomment_vim'              " comment
 Plug 'jiangmiao/auto-pairs'             " auto pairs
@@ -118,6 +114,9 @@ Plug 'tpope/vim-fugitive'               " git support
 Plug 'ianding1/leetcode.vim'            " leetcode
 Plug 'tpope/vim-eunuch'                 " sudo write
 Plug 'itchyny/calendar.vim'             " calendar
+Plug 'tpope/vim-obsession'              " auto save sessions
+Plug 'voldikss/vim-translator'          " translator
+Plug 'jpalardy/vim-slime'               " run in terminal
 
 call plug#end()
 
@@ -140,11 +139,14 @@ set mouse=a                                             " enable mouse scrolling
 
 filetype plugin indent on                               " enable indentations
 set tabstop=4 softtabstop=4 shiftwidth=4 expandtab smarttab autoindent            " tab key actions
-autocmd FileType haskell setlocal shiftwidth=2 softtabstop=2 expandtab
+autocmd FileType haskell,tex setlocal shiftwidth=2 softtabstop=2 expandtab
 set incsearch ignorecase smartcase hlsearch             " highlight text while searching
 set list listchars=trail:»,tab:»-                       " use tab to navigate in list mode
 set fillchars+=vert:\▏                                  " requires a patched nerd font (try furaCode)
 set wrap breakindent                                    " wrap long lines to the width sset by tw
+set tw=0                                                " do not auto wrap lines that are longer than that
+set linebreak
+set nolist  " list disables linebreak
 set encoding=utf-8                                      " text encoding
 set number                                              " enable numbers on the left
 set relativenumber                                      " current line is 0
@@ -152,7 +154,6 @@ set title                                               " tab title as file file
 set conceallevel=2                                      " set this so we womt break indentation plugin
 set splitright                                          " open vertical split to the right
 " set splitbelow                                          " open horizontal split to the bottom
-set tw=80                                               " auto wrap lines that are longer than that
 set emoji                                               " enable emojis
 let g:indentLine_setConceal = 0                         " actually fix the annoying markdown links conversion
 au BufEnter * set fo-=c fo-=r fo-=o                     " stop annying auto commenting on new lines
@@ -260,9 +261,6 @@ function! CocCurrentFunction()
     return get(b:, 'coc_current_function', '')
 endfunction
 
-"lightline
-      " \   'right': [ [ 'readonly', 'filename'  ] ]
-" \ 'colorscheme': 'ayu_mirage',
 let g:lightline = {
       \ 'colorscheme': 'gruvbox_material',
       \ 'active': {
@@ -315,7 +313,7 @@ let g:lightline = {
         " \'tabline_separator':{'left':"\ue0bc",'right':"\ue0be"},
 
 function! LightlineReadonly()
-  return &readonly && &filetype !~# '\v(help|vimfiler|unite|vista|defx)' ? 'RO' : ''
+  return &readonly && &filetype !~# '\v(help|vimfiler|unite|vista)' ? 'RO' : ''
 endfunction
 
 function! LightlineFileformat()
@@ -332,7 +330,6 @@ let g:vimfiler_force_overwrite_statusline = 0
 function! LightlineFilename()
   let filename = expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
   let filename = substitute(filename, '__vista__','vista','')
-  let filename = substitute(filename, '\[defx\] defx-0','defx','')
   let modified = &modified ? ' +' : ''
   return filename . modified
 endfunction
@@ -343,8 +340,6 @@ function! LightLineCoc()
     endif
     return trim(coc#status())
 endfunction
-
-
 
 
 
@@ -372,7 +367,6 @@ set shortmess+=c
 " always show signcolumns
 set signcolumn=yes
 
-
 " use <tab> for trigger completion and navigate to the next complete item
 function! s:check_back_space() abort
   let col = col('.') - 1
@@ -384,7 +378,7 @@ inoremap <silent><expr> <Tab>
       \ <SID>check_back_space() ? "\<Tab>" :
       \ coc#refresh()
 
-let g:UltiSnipsExpandTrigger="<s-tab"
+let g:UltiSnipsExpandTrigger="<s-tab>"
 
 " Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
 " Coc only does snippet and additional edit on confirm.
@@ -403,10 +397,9 @@ nmap <silent> gk <Plug>(coc-diagnostic-prev)
 nmap <silent> gk <Plug>(coc-diagnostic-references)
 
 
-
 "Coc-snippet
 " Use <C-l> for trigger snippet expand.
-imap <C-l> <Plug>(coc-snippets-expand)
+" imap <C-l> <Plug>(coc-snippets-expand)
 
 " Use <C-j> for select text for visual placeholder of snippet.
 vmap <C-j> <Plug>(coc-snippets-select)
@@ -429,6 +422,10 @@ let g:coc_global_extensions = [
             \'coc-r-lsp',
             \'coc-snippets',
             \'coc-clangd',
+            \'coc-texlab',
+            \'coc-ci',
+            \'coc-marketplace',
+            \'coc-floaterm',
             \]
 
             " \'coc-rust-analyzer',
@@ -438,37 +435,38 @@ let g:coc_global_extensions = [
             " \'coc-ccls',
             " \'coc-python',
 
-"ale
-"始终开启标志列
-let g:ale_sign_column_always = 1
-let g:ale_fix_on_save = 0
-let g:ale_set_highlights = 0
-let g:ale_statusline_format = ['✗ %d', '⚡ %d', '✔ OK']
-let g:ale_echo_msg_error_str = 'E'
-let g:ale_echo_msg_warning_str = 'W'
-let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
-"普通模式下，sp前往上一个错误或警告，sn前往下一个错误或警告
-nmap sp <Plug>(ale_previous_wrap)
-nmap sn <Plug>(ale_next_wrap)
-"<Leader>s触发/关闭语法检查
-nmap <Leader>s :ALEToggle<CR>
-"<Leader>d查看错误或警告的详细信息
-nmap <Leader>d :ALEDetail<CR>
-"文件内容发生变化时不进行检查
-" let g:ale_lint_on_text_changed = 'always'
-"打开文件时不进行检查
-let g:ale_lint_on_enter = 1
-let g:ale_sign_error = '>>'
-let g:ale_sign_warning = '--'
-let g:ale_linters = {'python': ['flake8','pylint']}
-let g:ale_linters_ignore = {'python': ['pylint']}
-let g:ale_python_flake8_options="--ignore=E501,W503 "
-"添加检测完成后回调
-augroup YourGroup
-    autocmd!
-    autocmd User ALELint call YourFunction()
-augroup END
-let b:ale_fixers = ['flake8','isort']
+" "ale
+" "始终开启标志列
+" let g:ale_sign_column_always = 1
+" let g:ale_fix_on_save = 0
+" let g:ale_set_highlights = 0
+" let g:ale_statusline_format = ['✗ %d', '⚡ %d', '✔ OK']
+" let g:ale_echo_msg_error_str = 'E'
+" let g:ale_echo_msg_warning_str = 'W'
+" let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+" "普通模式下，sp前往上一个错误或警告，sn前往下一个错误或警告
+" nmap sp <Plug>(ale_previous_wrap)
+" nmap sn <Plug>(ale_next_wrap)
+" "<Leader>s触发/关闭语法检查
+" nmap <Leader>s :ALEToggle<CR>
+" "<Leader>d查看错误或警告的详细信息
+" nmap <Leader>d :ALEDetail<CR>
+" "文件内容发生变化时不进行检查
+" " let g:ale_lint_on_text_changed = 'always'
+" "打开文件时不进行检查
+" let g:ale_lint_on_enter = 1
+" let g:ale_sign_error = '>>'
+" let g:ale_sign_warning = '--'
+" let g:ale_linters = {'python': []}
+" " let g:ale_linters = {'python': ['flake8','pylint']}
+" let g:ale_linters_ignore = {'python': ['pylint']}
+" let g:ale_python_flake8_options="--ignore=E501,W503 "
+" "添加检测完成后回调
+" augroup YourGroup
+"     autocmd!
+"     autocmd User ALELint call YourFunction()
+" augroup END
+" let b:ale_fixers = ['flake8','isort']
 
 
 " auto save file changes
@@ -629,8 +627,6 @@ nmap <silent> <C-c> <Plug>(coc-cursors-position)
 " nmap <silent> <C-a> <Plug>(coc-cursors-word)
 " xmap <silent> <C-a> <Plug>(coc-cursors-range)
 
-" " for project wide search
-map <leader>/ :Ag<CR>
 
 " ======================== Meta Config ====================== "
 let mapleader=";"
@@ -642,18 +638,24 @@ nmap <leader>q :q!<CR>
 nmap <leader>w :w!<CR>
 
 " ======================== Move ====================== "
+" " for project wide search
+map <leader>/ :Ag<CR>
 " nnoremap <silent> <leader>f :call Fzf_dev()<CR>
 nnoremap <silent> <Leader>f :Files<CR>
 nnoremap <silent> <Leader>b :BLine<CR>
 nnoremap <silent> <Leader>a :Ag<CR>
 nnoremap <silent> <Leader>B :Buffers<CR>
 nnoremap <silent> <Leader>l :Line<CR>
-nnoremap <silent> <Leader>t :Windows<CR>
-inoremap jk <ESC>
+nnoremap <silent> <Leader>T :BTags<CR>
 
-" " Use `[g` and `]g` to navigate diagnostics
-" nmap <silent> [g <Plug>(coc-diagnostic-prev)
-" nmap <silent> ]g <Plug>(coc-diagnostic-next)
+" inoremap jk <ESC>
+" escape instern mode quickly
+let g:better_escape_interval = 150
+let g:better_escape_shortcut = 'jk'
+
+" Use `[g` and `]g` to navigate diagnostics
+nmap <silent> sp <Plug>(coc-diagnostic-prev)
+nmap <silent> sn <Plug>(coc-diagnostic-next)
 
 " switch between splits using ctrl + {h,j,k,l}
 tnoremap <C-h> <C-\><C-N><C-w>h
@@ -669,127 +671,14 @@ noremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
-noremap <leader>e :Defx `expand('%:p:h')` -search=`expand('%:p')`  -split=vertical -winwidth=50 -direction=botright -toggle <CR>
-" show hidden files
-noremap <leader>E :Defx -show-ignored-files `expand('%:p:h')` -search=`expand('%:p')`  -split=vertical -winwidth=50 -direction=botright -toggle <CR>
-" noremap <leader>e :Defx `expand('%:p:h')` -search=`expand('%:p')`  -split=vertical -winwidth=100 -direction=topleft -toggle <CR>
-
-" defx config
-call defx#custom#option('_', {
-            \ 'winwidth': 20,
-            \ 'split': 'vertical',
-            \ 'direction': 'botleft',
-            \ 'show_ignored_files': 0,
-            \ 'buffer_name': 'defx',
-            \ 'toggle': 1,
-            \ 'resume': 1
-            \ })
-
-call defx#custom#column('icon', {
-            \ 'directory_icon': '>',
-            \ 'opened_icon': 'v',
-            \ 'root_icon': ' ',
-            \ })
-
-call defx#custom#column('filename', {
-            \ 'min_width': 40,
-            \ 'max_width': 40,
-            \ })
-
-call defx#custom#column('mark', {
-            \ 'readonly_icon': '✗',
-            \ 'selected_icon': '✓',
-            \ })
-
-
-
-"defx
-autocmd FileType defx call s:defx_my_settings()
-function! s:defx_my_settings() abort
-    " Define mappings
-    nnoremap <silent><buffer><expr> <CR>
-                \ defx#do_action('open')
-    " nnoremap <silent><buffer><expr> I
-    "             \ defx#do_action('drop')
-    nnoremap <silent><buffer><expr> i
-                \ defx#do_action('multi',['drop','quit'])
-    nnoremap <silent><buffer><expr> c
-                \ defx#do_action('copy')
-    nnoremap <silent><buffer><expr> m
-                \ defx#do_action('move')
-    nnoremap <silent><buffer><expr> p
-                \ defx#do_action('paste')
-    nnoremap <silent><buffer><expr> l
-                \ defx#do_action('open')
-    " nnoremap <silent><buffer><expr> E
-    "             \ defx#do_action('open', 'vsplit')
-    nnoremap <silent><buffer><expr> s
-                \ defx#do_action('multi',[['drop','split'],'quit'])
-    nnoremap <silent><buffer><expr> v
-                \ defx#do_action('multi',[['drop','vsplit'],'quit'])
-    nnoremap <silent><buffer><expr> P
-                \ defx#do_action('open', 'pedit')
-    nnoremap <silent><buffer><expr> o
-                \ defx#do_action('open_or_close_tree')
-    nnoremap <silent><buffer><expr> O
-                \ defx#do_action('open_tree_recursive')
-    nnoremap <silent><buffer><expr> K
-                \ defx#do_action('new_directory')
-    nnoremap <silent><buffer><expr> N
-                \ defx#do_action('new_file')
-    nnoremap <silent><buffer><expr> M
-                \ defx#do_action('new_multiple_files')
-    nnoremap <silent><buffer><expr> C
-                \ defx#do_action('toggle_columns',
-                \                'mark:indent:icon:filename:type:size:time')
-    nnoremap <silent><buffer><expr> S
-                \ defx#do_action('toggle_sort', 'time')
-    nnoremap <silent><buffer><expr> d
-                \ defx#do_action('remove')
-    nnoremap <silent><buffer><expr> r
-                \ defx#do_action('rename')
-    nnoremap <silent><buffer><expr> !
-                \ defx#do_action('execute_command')
-    nnoremap <silent><buffer><expr> x
-                \ defx#do_action('execute_system')
-    nnoremap <silent><buffer><expr> yy
-                \ defx#do_action('yank_path')
-    nnoremap <silent><buffer><expr> .
-                \ defx#do_action('toggle_ignored_files')
-    nnoremap <silent><buffer><expr> ;
-                \ defx#do_action('repeat')
-    nnoremap <silent><buffer><expr> h
-                \ defx#do_action('cd', ['..'])
-    nnoremap <silent><buffer><expr> ~
-                \ defx#do_action('cd')
-    nnoremap <silent><buffer><expr> q
-                \ defx#do_action('quit')
-    nnoremap <silent><buffer><expr> <Space>
-                \ defx#do_action('toggle_select') . 'j'
-    nnoremap <silent><buffer><expr> *
-                \ defx#do_action('toggle_select_all')
-    nnoremap <silent><buffer><expr> j
-                \ line('.') == line('$') ? 'gg' : 'j'
-    nnoremap <silent><buffer><expr> k
-                \ line('.') == 1 ? 'G' : 'k'
-    nnoremap <silent><buffer><expr> <C-l>
-                \ defx#do_action('redraw')
-    nnoremap <silent><buffer><expr> <C-g>
-                \ defx#do_action('print')
-    nnoremap <silent><buffer><expr> cd
-                \ defx#do_action('change_vim_cwd')
-endfunction
-
-
-" map <silent> <leader>j :Defx -columns=mark:indent:icon:filename:type:size:time
-"             \           -split=vertical -winwidth=40 -direction=topleft getcwd() -search=expand('%:p')<cr>
-
-autocmd BufWritePost * call defx#redraw()
+" netrw open Explore in split
+noremap <leader>e :Vex <CR>
+noremap <leader>E :Sex <CR>
 
 " tags
-nmap <leader>v :Vista!! <CR>
+nmap <leader>V :Vista!! <CR>
 " nmap <leader>v :Vista show<CR>  :Vista focus<CR>
-nmap <leader>V :Vista finder<CR>
+nmap <leader>v :Vista finder<CR>
 let g:vista#renderer#enable_icon = 1
 let g:vista#renderer#enable_icon = 1
 let g:vista_sidebar_position = 'vertical topleft'
@@ -799,6 +688,10 @@ let g:vista#renderer#enable_icon=v:false
 let g:vista_ctags_cmd = {
       \ 'haskell': 'hasktags -x -o - -c',
       \ }
+
+" coc-ci 中文分词移动
+nmap <silent> w <Plug>(coc-ci-w)
+nmap <silent> b <Plug>(coc-ci-b)
 
 " ======================== Display ====================== "
 nmap <leader>g :Goyo<CR>
@@ -818,18 +711,6 @@ let g:SimpylFold_docstring_preview = 1
 set nofoldenable    " disable folding
 nnoremap <space> za
 vnoremap <space> zf
-
-" " anyfold
-" autocmd Filetype * AnyFoldActivate
-" let g:anyfold_fold_comments=1
-" set foldlevel=0
-" hi Folded term=NONE
-" syntax on
-"
-" colorscheme gruvbox
-" highlight Normal guibg=NONE ctermbg=None
-" set termguicolors                                       " Opaque Background
-
 
 function! Zoom ()
     " check if is the zoomed state (tabnumber > 1 && window == 1)
@@ -902,12 +783,14 @@ nmap <Plug>SwapItFallbackDecrement <Plug>SpeedDatingDown
 vmap <Plug>SwapItFallbackIncrement <Plug>SpeedDatingUp
 vmap <Plug>SwapItFallbackDecrement <Plug>SpeedDatingDown
 
+
 "nvim-R
 let g:R_assign = 0
 let R_complete = 1
 let R_show_args = 1
 let R_openhtml=1
 let R_latexcmd = 'xelatex'
+
 
 " Bullets.vim for item list
 let g:bullets_enabled_file_types = [
@@ -923,6 +806,7 @@ let g:bullets_outline_levels = ['num','std*',
  \ 'std+', 'std-']
 
 let g:bullets_checkbox_markers = ' .oOX'
+
 
 " csv
 " aug CSV_Editing
@@ -941,6 +825,7 @@ let g:AutoPairsFlyMode = 1
 let g:AutoPairs = {'(':')', '[':']', '{':'}',"'":"'",'"':'"', '`':'`'}
 au Filetype rust let b:AutoPairs = {'(':')', '[':']', '{':'}',"'":"'",'"':'"', '`':'`', '<':'>'}
 
+
 "input method
 " The input method for Normal mode (as defined by `xkbswitch -g` or `ibus engine`)
 let g:barbaric_default = 0
@@ -950,8 +835,6 @@ let g:barbaric_scope = 'buffer'
 " Useful if you only need IM persistence for short bursts of active work.
 let g:barbaric_timeout = -1
 
-
-nmap <Leader>cd  <Plug>(coc-codelens-action)
 
 "autoformat
 noremap <F3> :Autoformat<CR>
@@ -964,14 +847,14 @@ let g:formatdef_my_sql_format = '"pg_format --type-case 3 --wrap-limit 80 --func
 
 " disable indent for AsyncTask configuration
 au BufRead,BufNewFile *.tasks    setfiletype tasks
-autocmd FileType vim,tex,rmarkdown,rmd,markdown,todo,yaml,yml,cfg,tasks,dosini,conf,vimwiki let b:autoformat_autoindent=0
-autocmd FileType vim,tex,rmarkdown,rmd,markdown,todo,yaml,yml,cfg,tasks,dosini,conf,vimwiki let b:shiftwidth=4
+autocmd FileType vim,tex,rmarkdown,rmd,markdown,todo,yaml,yml,cfg,tasks,dosini,conf,vimwiki,snippet let b:autoformat_autoindent=0
+autocmd FileType vim,tex,rmarkdown,rmd,markdown,todo,yaml,yml,cfg,tasks,dosini,conf,vimwiki,snippet let b:shiftwidth=4
+autocmd FileType snippet let b:autoformat_remove_trailing_spaces = 0
 let b:autoformat_autoindent=0
 au BufWrite * :Autoformat
 
 
 "vim-table-mode
-
 function! s:isAtStartOfLine(mapping)
   let text_before_cursor = getline('.')[0 : col('.')-1]
   let mapping_pattern = '\V' . escape(a:mapping, '\')
@@ -986,60 +869,40 @@ inoreabbrev <expr> __
           \ <SID>isAtStartOfLine('__') ?
           \ '<c-o>:silent! TableModeDisable<cr>' : '__'
 
+
 " vimwiki
 let g:vimwiki_global_ext = 0
-let g:vimwiki_list = [{'path': '~/vimwiki/', 'custom_wiki2html': 'vimwiki_markdown', 'syntax': 'markdown', 'ext': '.md'},
-            \ {'path': '~/Document/Seafile/private/vimwiki2', 'custom_wiki2html': 'vimwiki_markdown', 'syntax': 'markdown', 'ext': '.md'}]
-
-
+" let g:vimwiki_list = [{'path': '~/vimwiki/', 'custom_wiki2html': 'vimwiki_markdown', 'syntax': 'markdown', 'ext': '.md'},
+"             \ {'path': '~/Document/Seafile/private/vimwiki2', 'custom_wiki2html': 'vimwiki_markdown', 'syntax': 'markdown', 'ext': '.md'}]
+let g:vimwiki_list = [{
+  \ 'path':'~/Document/Seafile/private/vimwiki',
+  \ 'auto_export': 1,
+  \ 'automatic_nested_syntaxes':1,
+  \ 'path_html': '~/Document/Seafile/private/vimwiki_html',
+  \ 'template_path': '~/Document/Seafile/private/vimwiki/template',
+  \ 'syntax': 'markdown',
+  \ 'ext':'.md',
+  \ 'template_default':'markdown',
+  \ 'custom_wiki2html': '~/vimwiki/wiki2html.sh',
+  \ 'template_ext':'.html'
+\},
+  \{ 'auto_export': 0,
+  \ 'automatic_nested_syntaxes':1,
+  \ 'path':'~/Document/Seafile/private/vimwiki2',
+  \ 'path_html': '~/Document/Seafile/private/vimwiki2_html',
+  \ 'template_path': '~/Document/Seafile/private/vimwiki/template',
+  \ 'syntax': 'markdown',
+  \ 'ext':'.md',
+  \ 'template_default':'markdown',
+  \ 'custom_wiki2html': '~/vimwiki/wiki2html.sh',
+  \ 'template_ext':'.html'
+\}]
 
 
 " ======================== Exec ====================== "
 " carbon sh now
 vnoremap <F8> :CarbonNowSh<CR>
 
-"python
-" nnoremap <silent> <Leader>r :call CompileRunGcc()<cr>
-
-func! CompileRunGcc()
-    exec "w"
-    let l:quickfix_height = float2nr(winheight("%")/2.618)
-    if &filetype == 'python'
-        if search("@profile")
-            exec "AsyncRun kernprof -l -v %"
-            exec "rightbelow copen".quickfix_height
-            " exec "vertical rightbelow copen 75"
-            " exec "copen"
-            exec "wincmd p"
-        elseif search("set_trace()")
-            exec "!python %"
-        else
-            exec "AsyncRun -mode=term -pos=bottom -focus=0 -name=123 -rows=".quickfix_height." pytype % && python %"
-            " exec "AsyncRun -raw pytype % && python %"
-            " exec "AsyncRun -raw mypy % && python %"
-        endif
-    elseif &filetype == 'c'
-        " exec "AsyncRun -raw LC_ALL=C gcc % -o %< -Wall && %< "
-        exec "AsyncRun -raw LC_ALL=C gcc % -o %< -Wall && ./%< "
-        " exec "vertical rightbelow copen 75"
-        exec "rightbelow copen ".quickfix_height
-        " exec "copen"
-        exec "wincmd p"
-        exec "let w:quickfix_title = 'foo'"
-    elseif &filetype == 'haskell'
-        exec "AsyncRun -raw ghc --make %< && ./%<"
-        " exec "AsyncRun -raw stack exec -- ghc % && ./%<"
-        " exec "AsyncRun -raw stack %"
-        exec "rightbelow copen ".quickfix_height
-    elseif &filetype == 'tex'
-        exec "AsyncRun -raw xelatex % "
-        exec "rightbelow copen ".quickfix_height
-        " exec "copen"
-        exec "wincmd p"
-        exec "let w:quickfix_title = 'foo'"
-    endif
-
-endfunc
 
 " asynctasks
 let g:asyncrun_open=6
@@ -1051,7 +914,8 @@ let g:asynctasks_term_rows = float2nr(winheight("%")/2.618)
 nnoremap <silent> <Leader>m :AsyncTask file-build<cr>
 nnoremap <silent> <Leader>r :AsyncTask file-run<cr>
 nnoremap <silent> <Leader>c :AsyncTask file-check<cr>
-nnoremap <silent> <Leader>T :AsyncTaskFzf <cr>
+nnoremap <silent> <Leader>t :AsyncTaskFzf <cr>
+
 
 "zeal map
 nnoremap gz :Zeavim "<cword>"&<CR><CR>
@@ -1070,6 +934,25 @@ nnoremap <leader>li :LeetCodeSignIn<cr>
 let g:leetcode_solution_filetype = 'python'
 let g:leetcode_browser = 'chrome'
 
+
 "calendar
 let g:calendar_google_calendar = 0
 let g:calendar_google_task = 0
+
+
+"translator
+nmap <silent> <Leader>t <Plug>TranslateW
+vmap <silent> <Leader>t <Plug>TranslateWV
+" nnoremap <silent><expr> <M-f> translator#window#float#has_scroll() ?
+"                             \ translator#window#float#scroll(1) : "\<M-f>"
+" nnoremap <silent><expr> <M-b> translator#window#float#has_scroll() ?
+"                             \ translator#window#float#scroll(0) : "\<M-f>"
+let g:translator_target_lang='zh'
+let g:translator_default_engines=['haici', 'google', 'youdao']
+
+
+" vim-slime
+let g:slime_target = "tmux"
+let g:slime_python_ipython = 1
+let g:slime_default_config = {"socket_name": "default", "target_pane": "{last}"}
+

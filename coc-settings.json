@@ -77,5 +77,14 @@
             "filetypes": ["sql", "mysql"]
         }
     },
-    "rust-client.channel": "stable"
+    "rust-client.channel": "stable",
+    "snippets.priority":100,
+    "coc.source.syntax.priority":90,
+    "coc.source.file.priority":65,
+    "coc.source.vimtex.priority":60,
+    "coc.source.buffer.priority":50,
+    "coc.source.around.priority":45,
+    "coc.source.tmuxcomplete.priority":40,
+    "coc.source.floaterm.priority":30,
+    "coc.source.word.priority":40
 }
