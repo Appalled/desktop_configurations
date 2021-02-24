@@ -27,7 +27,6 @@ Plug 'sainnhe/gruvbox-material'
 " Plug 'fatih/molokai'
 
 Plug 'itchyny/lightline.vim'      " lightline
-" Plug 'maximbaz/lightline-ale'     " lightline ale
 Plug 'sainnhe/artify.vim'         " change font disply
 Plug 'rmolin88/pomodoro.vim'      " pomodoro timer
 Plug 'romainl/vim-cool'           " disable hl until another search is performed
@@ -51,6 +50,8 @@ Plug 'godlygeek/tabular'          "markdown
 Plug 'plasticboy/vim-markdown'    "markdown extension
 Plug 'arzg/vim-rust-syntax-ext'   "rust highlight extension
 Plug 'voldikss/vim-floaterm'      "float window
+Plug 'Jorengarenar/vim-syntaxMarkerFold' "enable custom fold while syntax folder is on
+Plug 'Xuyuanp/scrollbar.nvim'     "scrollbar
 
 " ================= Move ================== "
 Plug 'easymotion/vim-easymotion'
@@ -59,12 +60,10 @@ Plug 'junegunn/fzf.vim' " fuzzy search integration
 Plug 'tpope/vim-vinegar'              " another split file explore
 Plug 'takac/vim-hardtime'             " no jjjjkkkkk
 Plug 'jdhao/better-escape.vim'        "quick escape
+Plug 'christoomey/vim-tmux-navigator' "move between tmux and vim
 
 " ================= Edit ================== "
 Plug 'neoclide/coc.nvim',               {'branch': 'release'}
-" Plug 'valloric/youcompleteme'
-" Plug 'ervandew/supertab'
-" Plug 'w0rp/ale'                         "linting
 Plug 'honza/vim-snippets'               " snippets tool
 Plug 'SirVer/ultisnips'                 " snippets source
 
@@ -396,6 +395,30 @@ nmap <silent> gj <Plug>(coc-diagnostic-next)
 nmap <silent> gk <Plug>(coc-diagnostic-prev)
 nmap <silent> gk <Plug>(coc-diagnostic-references)
 
+" Map function and class text objects
+" NOTE: Requires 'textDocument.documentSymbol' support from the language server.
+xmap if <Plug>(coc-funcobj-i)
+omap if <Plug>(coc-funcobj-i)
+xmap af <Plug>(coc-funcobj-a)
+omap af <Plug>(coc-funcobj-a)
+xmap ic <Plug>(coc-classobj-i)
+omap ic <Plug>(coc-classobj-i)
+xmap ac <Plug>(coc-classobj-a)
+omap ac <Plug>(coc-classobj-a)
+
+
+" Use K to show documentation in preview window.
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  elseif (coc#rpc#ready())
+    call CocActionAsync('doHover')
+  else
+    execute '!' . &keywordprg . " " . expand('<cword>')
+  endif
+endfunction
 
 "Coc-snippet
 " Use <C-l> for trigger snippet expand.
@@ -639,14 +662,16 @@ nmap <leader>w :w!<CR>
 
 " ======================== Move ====================== "
 " " for project wide search
-map <leader>/ :Ag<CR>
+" map <leader>/ :Ag<CR>
 " nnoremap <silent> <leader>f :call Fzf_dev()<CR>
-nnoremap <silent> <Leader>f :Files<CR>
+nnoremap <silent> <Leader>f :Files ~/Document/Seafile<CR>
+nnoremap <silent> <Leader>fp :Files ~/Document/Seafile/private<CR>
 nnoremap <silent> <Leader>b :BLine<CR>
 nnoremap <silent> <Leader>a :Ag<CR>
 nnoremap <silent> <Leader>B :Buffers<CR>
 nnoremap <silent> <Leader>l :Line<CR>
 nnoremap <silent> <Leader>T :BTags<CR>
+nnoremap <silent> <Leader>hh :History<CR>
 
 " inoremap jk <ESC>
 " escape instern mode quickly
@@ -672,13 +697,14 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
 " netrw open Explore in split
-noremap <leader>e :Vex <CR>
-noremap <leader>E :Sex <CR>
+noremap <leader>e :Exp <CR>
+noremap <leader>E :Vex <CR>
 
 " tags
 nmap <leader>V :Vista!! <CR>
 " nmap <leader>v :Vista show<CR>  :Vista focus<CR>
-nmap <leader>v :Vista finder<CR>
+" nmap <leader>v :Vista <CR>
+nmap <leader>v :call vista#finder#fzf#Run('coc')<CR>
 let g:vista#renderer#enable_icon = 1
 let g:vista#renderer#enable_icon = 1
 let g:vista_sidebar_position = 'vertical topleft'
@@ -708,7 +734,8 @@ noremap * *:set hlsearch<cr>
 
 "simpylfold
 let g:SimpylFold_docstring_preview = 1
-set nofoldenable    " disable folding
+set foldmethod=syntax
+autocmd FileType python set nofoldenable    " disable folding for python
 nnoremap <space> za
 vnoremap <space> zf
 
@@ -736,6 +763,14 @@ map <leader>H :pc <CR>
 let g:semshi#simplify_markup = v:true
 let g:semshi#always_update_all_highlights = v:true
 let g:hardtime_default_on = 1
+
+" scrollbar
+augroup ScrollbarInit
+  autocmd!
+  autocmd CursorMoved,VimResized,QuitPre * silent! lua require('scrollbar').show()
+  autocmd WinEnter,FocusGained           * silent! lua require('scrollbar').show()
+  autocmd WinLeave,FocusLost             * silent! lua require('scrollbar').clear()
+augroup end
 
 " ======================== Edit ====================== "
 " Copy to clipboard
@@ -943,10 +978,6 @@ let g:calendar_google_task = 0
 "translator
 nmap <silent> <Leader>t <Plug>TranslateW
 vmap <silent> <Leader>t <Plug>TranslateWV
-" nnoremap <silent><expr> <M-f> translator#window#float#has_scroll() ?
-"                             \ translator#window#float#scroll(1) : "\<M-f>"
-" nnoremap <silent><expr> <M-b> translator#window#float#has_scroll() ?
-"                             \ translator#window#float#scroll(0) : "\<M-f>"
 let g:translator_target_lang='zh'
 let g:translator_default_engines=['haici', 'google', 'youdao']
 
