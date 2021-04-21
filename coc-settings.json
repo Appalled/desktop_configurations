@@ -86,5 +86,6 @@
     "coc.source.around.priority":45,
     "coc.source.tmuxcomplete.priority":40,
     "coc.source.floaterm.priority":30,
-    "coc.source.word.priority":40
+    "coc.source.word.priority":40,
+    "leetcode.language":"python3"
 }

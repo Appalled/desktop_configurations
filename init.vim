@@ -23,8 +23,11 @@ call plug#begin('~/.config/nvim/plugged')
 " ================= Display ================== "
 Plug 'morhetz/gruvbox'
 Plug 'sainnhe/gruvbox-material'
-" Plug 'junegunn/seoul256.vim'
+Plug 'junegunn/seoul256.vim'
 " Plug 'fatih/molokai'
+Plug 'jaredgorski/spacecamp'
+Plug 'flazz/vim-colorschemes'
+Plug 'ashfinal/vim-colors-violet'
 
 Plug 'itchyny/lightline.vim'      " lightline
 Plug 'sainnhe/artify.vim'         " change font disply
@@ -40,18 +43,18 @@ Plug 'Yggdroot/indentLine'        " show indentation lines
 Plug 'google/vim-searchindex'     " add number of found matching search items
 Plug 'junegunn/vim-peekaboo'      " register preview
 Plug 'wellle/visual-split.vim'
-Plug 'lambdalisue/vim-fullscreen' " fullscreen
+Plug 'lambdalisue/vim-fullscreen' " fullscreen for gui
 Plug 'junegunn/goyo.vim'          " zen mode
 Plug 'numirias/semshi',           {'do': ':UpdateRemotePlugins'}
 Plug 'liuchengxu/vista.vim'       "display structure of context
 Plug 'markonm/traces.vim'         "highlight and live preview for substitute and smagic
-Plug 'neovimhaskell/haskell-vim'  "highlight of haskell
 Plug 'godlygeek/tabular'          "markdown
 Plug 'plasticboy/vim-markdown'    "markdown extension
 Plug 'arzg/vim-rust-syntax-ext'   "rust highlight extension
 Plug 'voldikss/vim-floaterm'      "float window
 Plug 'Jorengarenar/vim-syntaxMarkerFold' "enable custom fold while syntax folder is on
 Plug 'Xuyuanp/scrollbar.nvim'     "scrollbar
+Plug 'itchyny/vim-cursorword'     "add underline for cursorword
 
 " ================= Move ================== "
 Plug 'easymotion/vim-easymotion'
@@ -73,8 +76,8 @@ Plug 'jiangmiao/auto-pairs'             " auto pairs
 Plug 'tpope/vim-speeddating'            " edit dating
 Plug 'mjbrownie/swapit'                 " swith between true and false combined with speeddating
 Plug 'tpope/vim-unimpaired'             " shortcust using pairs
-Plug 'tpope/vim-abolish'                " substitution
-Plug 'AndrewRadev/splitjoin.vim'        " split and join lines
+Plug 'tpope/vim-abolish'                " smarter substitution
+Plug 'AndrewRadev/splitjoin.vim'        " split and join lines gS gJ
 Plug 'mg979/vim-visual-multi', {'branch': 'master'}  " multiple cursor
 Plug 'chiel92/vim-autoformat'           " autoformat
 Plug 'brglng/vim-im-select'             " input method
@@ -116,21 +119,36 @@ Plug 'itchyny/calendar.vim'             " calendar
 Plug 'tpope/vim-obsession'              " auto save sessions
 Plug 'voldikss/vim-translator'          " translator
 Plug 'jpalardy/vim-slime'               " run in terminal
+Plug 'skywind3000/vim-terminal-help'    " terminal enhance ( pip3 install neovim-remote )
 
 call plug#end()
 
 
 
 " ==================== general config ======================== "
-" set background=dark
-let g:gruvbox_material_background = 'hard'
+
+" " light without bg transparency config
+" let g:gruvbox_material_background = 'medium'
+" let g:gruvbox_material_transparent_background=0
+" let g:gruvbox_material_enable_italic = 1
+" let g:gruvbox_material_disable_italic_comment = 1
+" set termguicolors                                       " Opaque Background
+" set background=light
+" colorscheme gruvbox-material
+
+" gruvbox dark
+set background=dark
+" let g:gruvbox_material_background = 'hard'
+let g:gruvbox_material_background = 'medium'
+" let g:gruvbox_material_background = 'soft'
 let g:gruvbox_material_transparent_background=1
 let g:gruvbox_material_enable_italic = 1
 let g:gruvbox_material_disable_italic_comment = 1
 colorscheme gruvbox-material
-" colorscheme gruvbox
 highlight Normal guibg=NONE ctermbg=None
 set termguicolors                                       " Opaque Background
+
+
 set mouse=a                                             " enable mouse scrolling
 " set clipboard+=unnamedplus                            " use system clipboard by default
 
@@ -162,26 +180,25 @@ set nofoldenable                                        " disable folding
 
 
 " " Coloring
-highlight Pmenu guibg='00010a' guifg=white              " popup menu colors
-highlight Comment gui=bold                              " bold comments
+" highlight Pmenu guibg='00010a' guifg=white              " popup menu colors
+" highlight Comment gui=bold                              " bold comments
 highlight Normal gui=none
 highlight NonText guibg=none
 highlight clear SignColumn                              " use number color for sign colum color
 autocmd ColorScheme * highlight VertSplit cterm=NONE    " split color
 hi NonText guifg=bg                                     " mask ~ on empty lines
 hi clear CursorLineNr                                   " use the theme color for relative number
-hi CursorLineNr gui=bold                                " make relative number bold
 
-" colors for git (especially the gutter)
-hi DiffAdd guibg='#0f111a'
-hi DiffChange guibg='#0f111a'
+" " colors for git (especially the gutter)
+" hi DiffAdd guibg='#0f111a'
+" hi DiffChange guibg='#0f111a'
 
-" coc multi cursor highlight color
-hi CocCursorRange guibg=#b16286 guifg=#ebdbb2
+" " coc multi cursor highlight color
+" hi CocCursorRange guibg=#b16286 guifg=#ebdbb2
 
-" Ale
-highlight ALEErrorSign ctermfg=9 ctermbg=15 guifg=#C30500
-highlight ALEWarningSign ctermfg=11 ctermbg=15 guifg=#FFA500
+" " Ale
+" highlight ALEErrorSign ctermfg=9 ctermbg=15 guifg=#C30500
+" highlight ALEWarningSign ctermfg=11 ctermbg=15 guifg=#FFA500
 
 " performance tweaks
 set nocursorline
@@ -341,7 +358,6 @@ function! LightLineCoc()
 endfunction
 
 
-
 "coc
 "解决coc弹窗出错
 if exists(':GuiPopupmenu') ==2
@@ -355,7 +371,7 @@ set nobackup
 set nowritebackup
 
 " Better display for messages
-set cmdheight=2
+set cmdheight=1
 
 " Smaller updatetime for CursorHold & CursorHoldI
 set updatetime=200
@@ -449,47 +465,15 @@ let g:coc_global_extensions = [
             \'coc-ci',
             \'coc-marketplace',
             \'coc-floaterm',
+            \'coc-markmap',
+            \'coc-ultisnips',
             \]
 
             " \'coc-rust-analyzer',
             " \'coc-sql',
-            " \'coc-ultisnips',
             " \'coc-neosnippet',
             " \'coc-ccls',
             " \'coc-python',
-
-" "ale
-" "始终开启标志列
-" let g:ale_sign_column_always = 1
-" let g:ale_fix_on_save = 0
-" let g:ale_set_highlights = 0
-" let g:ale_statusline_format = ['✗ %d', '⚡ %d', '✔ OK']
-" let g:ale_echo_msg_error_str = 'E'
-" let g:ale_echo_msg_warning_str = 'W'
-" let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
-" "普通模式下，sp前往上一个错误或警告，sn前往下一个错误或警告
-" nmap sp <Plug>(ale_previous_wrap)
-" nmap sn <Plug>(ale_next_wrap)
-" "<Leader>s触发/关闭语法检查
-" nmap <Leader>s :ALEToggle<CR>
-" "<Leader>d查看错误或警告的详细信息
-" nmap <Leader>d :ALEDetail<CR>
-" "文件内容发生变化时不进行检查
-" " let g:ale_lint_on_text_changed = 'always'
-" "打开文件时不进行检查
-" let g:ale_lint_on_enter = 1
-" let g:ale_sign_error = '>>'
-" let g:ale_sign_warning = '--'
-" let g:ale_linters = {'python': []}
-" " let g:ale_linters = {'python': ['flake8','pylint']}
-" let g:ale_linters_ignore = {'python': ['pylint']}
-" let g:ale_python_flake8_options="--ignore=E501,W503 "
-" "添加检测完成后回调
-" augroup YourGroup
-"     autocmd!
-"     autocmd User ALELint call YourFunction()
-" augroup END
-" let b:ale_fixers = ['flake8','isort']
 
 
 " auto save file changes
@@ -649,7 +633,7 @@ endfunction
 nmap <silent> <C-c> <Plug>(coc-cursors-position)
 " nmap <silent> <C-a> <Plug>(coc-cursors-word)
 " xmap <silent> <C-a> <Plug>(coc-cursors-range)
-
+command! -range=% Markmap CocCommand markmap.create -w <line1> <line2>
 
 " ======================== Meta Config ====================== "
 let mapleader=";"
@@ -966,8 +950,15 @@ nnoremap <leader>ll :LeetCodeList<cr>
 nnoremap <leader>lt :LeetCodeTest<cr>
 nnoremap <leader>ls :LeetCodeSubmit<cr>
 nnoremap <leader>li :LeetCodeSignIn<cr>
+let g:leetcode_china = 1
 let g:leetcode_solution_filetype = 'python'
 let g:leetcode_browser = 'chrome'
+
+" " leetcode-cn
+" nnoremap <leader>ll :CocList LeetcodeProblems<cr>
+" nnoremap <leader>lt :CocCommand leetcode.run<cr>
+" nnoremap <leader>ls :CocCommand leetcode.submit<cr>
+" nnoremap <leader>li :CocCommand leetcode.login<cr>
 
 
 "calendar
