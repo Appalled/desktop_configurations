@@ -30,6 +30,7 @@ Plug 'flazz/vim-colorschemes'
 Plug 'ashfinal/vim-colors-violet'
 
 Plug 'itchyny/lightline.vim'      " lightline
+Plug 'mopp/sky-color-clock.vim'   " colored clock
 Plug 'sainnhe/artify.vim'         " change font disply
 Plug 'rmolin88/pomodoro.vim'      " pomodoro timer
 Plug 'romainl/vim-cool'           " disable hl until another search is performed
@@ -120,6 +121,8 @@ Plug 'tpope/vim-obsession'              " auto save sessions
 Plug 'voldikss/vim-translator'          " translator
 Plug 'jpalardy/vim-slime'               " run in terminal
 Plug 'skywind3000/vim-terminal-help'    " terminal enhance ( pip3 install neovim-remote )
+Plug 'itchyny/vim-winfix'               " keep focus and window size
+Plug 'thanthese/tortoise-typing'        " typing practice
 
 call plug#end()
 
@@ -277,16 +280,24 @@ function! CocCurrentFunction()
     return get(b:, 'coc_current_function', '')
 endfunction
 
+" let g:sky_color_clock#timestamp_force_override = 1516201200 + 12 * 60 * 60 " 12:00:00
 let g:lightline = {
       \ 'colorscheme': 'gruvbox_material',
       \ 'active': {
-      \   'left': [ [ 'mode', 'paste', 'gitbranch'],
-      \             [ 'cocstatus' ] ],
-      \   'right': [ [ 'readonly', 'filename' ], [ 'percent'], [ 'pomodoro','linter_errors', 'linter_warnings' ]  ]
+      \   'left': [ [ 'mode', 'paste', 'gitbranch'],['readonly', 'filename' ],
+      \             [ 'cocstatus' ]],
+      \   'right': [['sky_color_clock'], [ 'percent'], [ 'pomodoro','linter_errors', 'linter_warnings' ]]
       \ },
       \ 'inactive': {
-      \   'right': [ [ 'readonly', 'filetype' ], [ 'percent'] ]
+        \ 'left': [[ 'readonly', 'filename' ]],
+      \   'right': [  [ 'percent'] ]
       \ },
+        \ 'component': {
+        \   'sky_color_clock': "%#SkyColorClock#%{' ' . sky_color_clock#statusline() . ' '}%#SkyColorClockTemp# ",
+        \ },
+        \ 'component_raw': {
+        \   'sky_color_clock': 1,
+        \ },
       \ 'component_function': {
       \   'gitbranch': 'FugitiveHead',
       \   'readonly': 'LightlineReadonly',
@@ -295,6 +306,7 @@ let g:lightline = {
       \   'filename': 'LightlineFilename',
       \   'cocstatus' : 'LightLineCoc',
       \   'pomodoro': 'PomodoroStatus',
+      \   'sky_clock': "sky_color_clock#statusline",
       \ },
       \ 'component_expand':{
       \  'linter_checking': 'lightline#ale#checking',
@@ -309,6 +321,7 @@ let g:lightline = {
       \     'linter_warnings': 'warning',
       \     'linter_errors': 'error',
       \     'linter_ok': 'right',
+      \     'percent':'right',
       \ },
       \ 'mode_map': {
         \ 'n' : 'N',
