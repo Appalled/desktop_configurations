@@ -230,9 +230,9 @@ noproxy () {
 # command prompt
 eval "$(starship init zsh)"
 # put at last
-alias pydata='source ~/data/bin/activate'
+# alias pydata='source ~/data/bin/activate'
 eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
+# eval "$(pyenv virtualenv-init -)"
 
 if [[ -n $VIRTUAL_ENV && -e "${VIRTUAL_ENV}/bin/activate" ]]; then
     source "${VIRTUAL_ENV}/bin/activate"

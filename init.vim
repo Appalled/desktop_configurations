@@ -31,6 +31,7 @@ nmap <leader>w :w!<CR>
 
 " == ui ==
 Plug 'sainnhe/gruvbox-material'
+Plug 'projekt0n/github-nvim-theme'
 Plug 'itchyny/lightline.vim'      " lightline
 Plug 'mopp/sky-color-clock.vim'   " colored clock
 Plug 'psliwka/vim-smoothie'       " some very smooth ass scrolling
@@ -38,6 +39,9 @@ Plug 'psliwka/vim-smoothie'       " some very smooth ass scrolling
 Plug 'luochen1990/rainbow'        " rainbow paranthesis
 Plug 'lambdalisue/vim-fullscreen' " fullscreen for gui
 Plug 'itchyny/vim-winfix'               " keep focus and window size
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'nvim-treesitter/playground'
+Plug 'wfxr/minimap.vim' 
 
 " == edit ==
 Plug 'Yggdroot/indentLine'        " show indentation lines
@@ -83,10 +87,10 @@ Plug 'sheerun/vim-polyglot'       " syntax hilight for multi languages
 
 " == move ==
 Plug 'tpope/vim-vinegar'                " another split file explore
-Plug 'easymotion/vim-easymotion'        "
+" Plug 'easymotion/vim-easymotion'        "
+Plug 'phaazon/hop.nvim'                 " new easymotion
 Plug 'farmergreg/vim-lastplace'         " open files at the last edited place
-Plug 'junegunn/fzf',    { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'junegunn/fzf.vim'                 " fuzzy search integration
+Plug 'Yggdroot/LeaderF'
 Plug 'christoomey/vim-tmux-navigator'   "move between tmux and vim
 
 " == edit ==
@@ -101,8 +105,8 @@ Plug 'tmhedberg/simpylfold'
 Plug 'Jorengarenar/vim-syntaxMarkerFold' "enable custom fold while syntax folder is on
 Plug 'mg979/vim-visual-multi', {'branch': 'master'}  " multiple cursor
 Plug 'AndrewRadev/splitjoin.vim'        " split and join lines gS gJ
-" Plug 'jiangmiao/auto-pairs'             " auto pairs
-Plug 'tmsvg/pear-tree'                    " another pairs
+Plug 'jiangmiao/auto-pairs'             " auto pairs
+" Plug 'tmsvg/pear-tree'                    " another pairs
 Plug 'tpope/vim-speeddating'              " edit dating
 Plug 'mjbrownie/swapit'                   " swith between true and false combined with speeddating
 Plug 'tpope/vim-unimpaired'               " add empty line
@@ -133,6 +137,7 @@ Plug 'tpope/vim-obsession'              " auto save sessions
 Plug 'voldikss/vim-translator'          " translator
 Plug 'thanthese/tortoise-typing'        " typing practice
 Plug 'rmolin88/pomodoro.vim'      " pomodoro timer
+Plug 'skywind3000/vim-terminal-help'
 
 call plug#end()
 
@@ -146,9 +151,8 @@ set mouse=a                                             " enable mouse scrolling
 filetype plugin indent on                               " enable indentations
 set tabstop=4 softtabstop=4 shiftwidth=4 expandtab smarttab autoindent            " tab key actions
 autocmd FileType haskell,tex,sql setlocal shiftwidth=2 softtabstop=2 expandtab
-set incsearch ignorecase smartcase hlsearch             " highlight text while searching
+" set incsearch ignorecase smartcase hlsearch             " highlight text while searching
 set list listchars=trail:»,tab:»-                       " use tab to navigate in list mode
-set fillchars+=vert:\▏                                  " requires a patched nerd font (try furaCode)
 set wrap breakindent                                    " wrap long lines to the width sset by tw
 set tw=0                                                " do not auto wrap lines that are longer than that
 set linebreak
@@ -165,7 +169,6 @@ let g:indentLine_setConceal = 0                         " actually fix the annoy
 au BufEnter * set fo-=c fo-=r fo-=o                     " stop annying auto commenting on new lines
 set undofile                                            " enable persistent undo
 set undodir=~/.nvim/tmp                                 " undo temp file directory
-set nofoldenable                                        " disable folding
 
 " performance tweaks
 set nocursorline
@@ -202,8 +205,12 @@ let g:gruvbox_material_transparent_background=1
 let g:gruvbox_material_enable_italic = 1
 let g:gruvbox_material_disable_italic_comment = 1
 colorscheme gruvbox-material
+
+
 highlight Normal guibg=NONE ctermbg=None
 set termguicolors                                       " Opaque Background
+
+
 " " Coloring
 " highlight Pmenu guibg='00010a' guifg=white              " popup menu colors
 " highlight Comment gui=bold                              " bold comments
@@ -213,18 +220,111 @@ highlight clear SignColumn                              " use number color for s
 autocmd ColorScheme * highlight VertSplit cterm=NONE    " split color
 hi NonText guifg=bg                                     " mask ~ on empty lines
 hi clear CursorLineNr                                   " use the theme color for relative number
+hi clear LineNr                                         " use the theme color for line number
+
+" tree sitter
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+  ignore_install = { "javascript" }, -- List of parsers to ignore installing
+  highlight = {
+    enable = true,              -- false will disable the whole extension
+    disable = { "c", "rust" },  -- list of language that will be disabled
+    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+    -- Using this option may slow down your editor, and you may see some duplicate highlights.
+    -- Instead of true it can also be a list of languages
+    additional_vim_regex_highlighting = false,
+  },
+}
+EOF
+
+lua << EOF
+require'hop'.setup { create_hl_autocmd = true
+}
+EOF
+" highlight
+
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+  highlight = {
+    enable = true,
+    custom_captures = {
+      -- Highlight the @foo.bar capture group with the "Identifier" highlight group.
+      ["foo.bar"] = "Identifier",
+    },
+    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+    -- Using this option may slow down your editor, and you may see some duplicate highlights.
+    -- Instead of true it can also be a list of languages
+    additional_vim_regex_highlighting = false,
+  },
+}
+EOF
+
+" tree sitter incremental_selection
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+  incremental_selection = {
+    enable = true,
+    keymaps = {
+      init_selection = "gnn",
+      node_incremental = "grn",
+      scope_incremental = "grc",
+      node_decremental = "grm",
+    },
+  },
+}
+EOF
+
+lua <<EOF
+local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
+parser_config.sql = {
+  install_info = {
+    url = "~/Coding/tools/tree_sitter_parser/tree-sitter-sql-main", -- local path or git repo
+    files = {"src/parser.c"}
+  },
+  filetype = "sql", -- if filetype does not agrees with parser name
+  used_by = {} -- additional filetypes that use this parser
+}
+require "nvim-treesitter.configs".setup {
+  playground = {
+    enable = false,
+    disable = {},
+    updatetime = 25, -- Debounced time for highlighting nodes in the playground from source code
+    persist_queries = false, -- Whether the query persists across vim sessions
+    keybindings = {
+      toggle_query_editor = 'o',
+      toggle_hl_groups = 'i',
+      toggle_injected_languages = 't',
+      toggle_anonymous_nodes = 'a',
+      toggle_language_display = 'I',
+      focus_language = 'f',
+      unfocus_language = 'F',
+      update = 'R',
+      goto_node = '<cr>',
+      show_help = '?',
+    },
+  }
+}
+require "nvim-treesitter.configs".setup {
+  query_linter = {
+    enable = true,
+    use_virtual_text = true,
+    lint_events = {"BufWrite", "CursorHold"},
+  },
+}
+
+EOF
+
+set foldmethod=expr
+set foldexpr=nvim_treesitter#foldexpr()
+
+"mini map
+let g:minimap_width = 10
 
 " == edit ==
 " ==== coc
-" required by coc
-set hidden
-set nobackup
-set nowritebackup
-set cmdheight=2
-set updatetime=300
-set shortmess+=c
-set signcolumn=yes
-
 "解决coc弹窗出错
 if exists(':GuiPopupmenu') ==2
     GuiPopupmenu 0
@@ -336,22 +436,6 @@ nmap <silent> <C-c> <Plug>(coc-cursors-position)
 command! -range=% Markmap CocCommand markmap.create -w <line1> <line2>
 
 
-" tags
-nmap <leader>V :Vista!! <CR>
-" nmap <leader>v :Vista show<CR>  :Vista focus<CR>
-" nmap <leader>v :Vista <CR>
-nmap <leader>v :call vista#finder#fzf#Run('coc')<CR>
-let g:vista#renderer#enable_icon = 1
-let g:vista#renderer#enable_icon = 1
-let g:vista_sidebar_position = 'vertical topleft'
-" let g:vista_executive_for = {'vimwiki': 'markdown', }
-let g:vista_executive_for = {'vimwiki': 'toc', }
-let g:vista#renderer#enable_icon=v:false
-let g:vista_ctags_cmd = {
-      \ 'haskell': 'hasktags -x -o - -c',
-      \ }
-
-
 " ==== lightline
 " Add diagnostic info for https://github.com/itchyny/lightline.vim
 function! CocCurrentFunction()
@@ -437,6 +521,7 @@ let g:vimfiler_force_overwrite_statusline = 0
 function! LightlineFilename()
   let filename = expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
   let filename = substitute(filename, '__vista__','vista','')
+  let filename = substitute(filename, '-MINIMAP-','','')
   let modified = &modified ? ' +' : ''
   return filename . modified
 endfunction
@@ -448,14 +533,16 @@ function! LightLineCoc()
     return trim(coc#status())
 endfunction
 
+let g:AutoPairsFlyMode = 1
+let g:AutoPairsShortcutBackInsert = '<M-b>'
 
-" Pair expansion is dot-repeatable by default:
-let g:pear_tree_repeatable_expand = 0
-
-" Smart pairs are disabled by default:
-let g:pear_tree_smart_openers = 1
-let g:pear_tree_smart_closers = 1
-let g:pear_tree_smart_backspace = 1
+" " Pair expansion is dot-repeatable by default:
+" let g:pear_tree_repeatable_expand = 0
+"
+" " Smart pairs are disabled by default:
+" let g:pear_tree_smart_openers = 1
+" let g:pear_tree_smart_closers = 1
+" let g:pear_tree_smart_backspace = 1
 
 " ==== input method
 " The input method for Normal mode (as defined by `xkbswitch -g` or `ibus engine`)
@@ -491,41 +578,47 @@ let g:bullets_outline_levels = ['num','std*',
 let g:bullets_checkbox_markers = ' .oOX'
 
 " == move ==
-" ==== easymotion
-let g:EasyMotion_startofline = 0                        " keep cursor column when JK motion
-let g:EasyMotion_smartcase = 1                          " ignore case
-map f <Plug>(easymotion-prefix)
-map ff <Plug>(easymotion-s)
-map fs <Plug>(easymotion-f)
-map fl <Plug>(easymotion-lineforward)
-map fj <Plug>(easymotion-j)
-map fk <Plug>(easymotion-k)
-map fh <Plug>(easymotion-linebackward)
+" " ==== easymotion
+" let g:EasyMotion_startofline = 0                        " keep cursor column when JK motion
+" let g:EasyMotion_smartcase = 1                          " ignore case
+" map f <Plug>(easymotion-prefix)
+" map ff <Plug>(easymotion-s)
+" map fs <Plug>(easymotion-f)
+" map fl <Plug>(easymotion-lineforward)
+" map fj <Plug>(easymotion-j)
+" map fk <Plug>(easymotion-k)
+" map fh <Plug>(easymotion-linebackward)
 
-" ==== fzf
-" general
-" let g:fzf_layout = { 'window': 'call CreateCenteredFloatingWindow()' }
-let $FZF_DEFAULT_OPTS="--reverse " " top to bottom
-let g:fzf_buffers_jump=1
+" HOP
+map ft :HopChar1BC<CR>
+map ff :HopChar1AC<CR>
+map fs :HopChar1AC<CR>
+map fj :HopLineAC<CR>
+map fk :HopLineBC<CR>
+map fb :HopWordBC<CR>
+map fw :HopWordAC<CR>
+" map ft :HopChar1BC<CR>
 
-" use rg by default
-if executable('rg')
-    let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!.git/*"'
-    set grepprg=rg\ --vimgrep
-    command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>).'| tr -d "\017"', 1, <bang>0)
-endif
-
-" " for project wide search
-" map <leader>/ :Ag<CR>
-" nnoremap <silent> <leader>f :call Fzf_dev()<CR>
-nnoremap <silent> <Leader>f :Files ~/Document/Seafile<CR>
-nnoremap <silent> <Leader>fp :Files ~/Document/Seafile/private<CR>
-nnoremap <silent> <Leader>b :BLine<CR>
-nnoremap <silent> <Leader>a :Ag<CR>
-nnoremap <silent> <Leader>B :Buffers<CR>
-nnoremap <silent> <Leader>l :Line<CR>
-nnoremap <silent> <Leader>T :BTags<CR>
-nnoremap <silent> <Leader>hh :History<CR>
+" Leaderf
+" don't show the help in normal mode
+nnoremap <silent> <Leader>T :Leaderf bufTag <CR>
+nnoremap <silent> <Leader>f :Leaderf file ~/Document/Seafile<CR>
+nnoremap <silent> <Leader>fp :Leaderf file ~/Document/Seafile/private<CR>
+nnoremap <silent> <Leader>l :Leaderf line<CR>
+nnoremap <silent> <Leader>B :Leaderf buffer<CR>
+let g:Lf_HideHelp = 1
+let g:Lf_UseCache = 0
+let g:Lf_UseVersionControlTool = 0
+let g:Lf_IgnoreCurrentBufferName = 1
+" popup mode
+let g:Lf_WindowPosition = 'popup'
+let g:Lf_PreviewInPopup = 1
+let g:Lf_StlSeparator = { 'left': "\ue0b0", 'right': "\ue0b2", 'font': "DejaVu Sans Mono for Powerline" }
+let g:Lf_PreviewResult = {'Function': 0, 'BufTag': 1, 'file': 1, 'line': 1, 'buffer': 1}
+let g:Lf_WildIgnore = {
+        \ 'dir': ['.svn','.git','.hg'],
+        \ 'file': ['*.sw?','~$*','*.bak','*.exe','*.o','*.so','*.py[co]','*.pdf','*.csv','*.log','*.7z','*.zip','*.bin']
+        \}
 
 
 " ==== netrw
@@ -547,10 +640,24 @@ noremap <leader>e :Exp <CR>
 
 " ==== simpylfold
 let g:SimpylFold_docstring_preview = 1
-set foldmethod=syntax
+set foldmethod=indent
+" set foldmethod=syntax
 autocmd FileType python set nofoldenable    " disable folding for python
 nnoremap <space> za
 vnoremap <space> zf
+
+" 自定义展示折叠内容
+set foldtext=MyFoldText()
+" 用空格作为折叠后面的占位符
+set fillchars=fold:\ 
+
+function! MyFoldText()
+    let line = getline(v:foldstart)
+    let folded_line_num = v:foldend - v:foldstart
+    let line_text = substitute(line, '^"{\+', '', 'g')
+    let fillcharcount = &textwidth - len(line_text) - len(folded_line_num)
+    return '+'. repeat('-', 2) . line_text . repeat('.', fillcharcount) . ' <' . folded_line_num . 'L>'
+endfunction
 
 function! Zoom ()
     " check if is the zoomed state (tabnumber > 1 && window == 1)
@@ -583,16 +690,14 @@ else
 endif
 
 " ==== highlight
-" 当光标一段时间保持不动了，就禁用高亮
-autocmd cursorhold * set nohlsearch
-" errormsg timeout
-autocmd CursorMoved * echo
 " 当输入查找命令时，再启用高亮
 noremap n :set hlsearch<cr>n
 noremap N :set hlsearch<cr>N
 noremap / :set hlsearch<cr>/
 noremap ? :set hlsearch<cr>?
 noremap * *:set hlsearch<cr>
+" 手动关闭搜索高亮
+nnoremap <A-u> :set nohlsearch<cr>
 
 " == edit ==
 " ==== Copy to clipboard
@@ -610,7 +715,7 @@ vnoremap <leader>P "+P
 " for global rename
 nmap <leader>rn <Plug>(coc-rename)
 " use Semshi to rename python instead of coc
-autocmd FileType python nmap <silent> <leader>rn :Semshi rename<CR>
+" autocmd FileType python nmap <silent> <leader>rn :Semshi rename<CR>
 
 " ==== auto save
 " auto save file changes

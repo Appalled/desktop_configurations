@@ -55,22 +55,6 @@
                 "haskell"
             ]
         },
-        "pylance": {
-            "enable": true,
-            "filetypes": ["python"],
-            "command": "node",
-            "args": ["/home/zen/.vscode/extensions/ms-python.vscode-pylance-2020.9.4/dist/server.bundle.js", "--stdio"],
-            "initializationOptions": {},
-            "settings": {
-                "python.analysis.typeCheckingMode": "basic",
-                "python.analysis.diagnosticMode": "openFilesOnly",
-                "python.analysis.stubPath": "./typings",
-                "python.analysis.autoSearchPaths": true,
-                "python.analysis.extraPaths": [],
-                "python.analysis.diagnosticSeverityOverrides": {},
-                "python.analysis.useLibraryCodeForTypes": true
-            }
-        },
         "sql": {
             "command": "sql-language-server",
             "args" : ["up", "--method", "stdio"],
