@@ -41,7 +41,8 @@ Plug 'lambdalisue/vim-fullscreen' " fullscreen for gui
 Plug 'itchyny/vim-winfix'               " keep focus and window size
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'nvim-treesitter/playground'
-Plug 'wfxr/minimap.vim' 
+" Plug 'wfxr/minimap.vim' 
+Plug 'kevinhwang91/nvim-bqf'
 
 " == edit ==
 Plug 'Yggdroot/indentLine'        " show indentation lines
@@ -92,6 +93,7 @@ Plug 'phaazon/hop.nvim'                 " new easymotion
 Plug 'farmergreg/vim-lastplace'         " open files at the last edited place
 Plug 'Yggdroot/LeaderF'
 Plug 'christoomey/vim-tmux-navigator'   "move between tmux and vim
+Plug 'skywind3000/vim-gutentags'        "handle tags
 
 " == edit ==
 Plug 'kana/vim-repeat'                    " repead by dot
@@ -127,6 +129,7 @@ Plug 'michaeljsmith/vim-indent-object'  " regard indent as text object
 " Plug 'coderifous/textobj-word-column.vim'
 " Plug 'glts/vim-textobj-comment'
 " Plug 'tpope/vim-surround'               " handle surrunds
+Plug 'terryma/vim-expand-region'
 
 " == run ==
 Plug 'skywind3000/asyncrun.vim'         " async run scripts
@@ -138,6 +141,7 @@ Plug 'voldikss/vim-translator'          " translator
 Plug 'thanthese/tortoise-typing'        " typing practice
 Plug 'rmolin88/pomodoro.vim'      " pomodoro timer
 Plug 'skywind3000/vim-terminal-help'
+Plug 'antoinemadec/FixCursorHold.nvim'  " acclerate cursor event
 
 call plug#end()
 
@@ -320,8 +324,8 @@ EOF
 set foldmethod=expr
 set foldexpr=nvim_treesitter#foldexpr()
 
-"mini map
-let g:minimap_width = 10
+" "mini map
+" let g:minimap_width = 10
 
 " == edit ==
 " ==== coc
@@ -601,7 +605,7 @@ map fw :HopWordAC<CR>
 
 " Leaderf
 " don't show the help in normal mode
-nnoremap <silent> <Leader>T :Leaderf bufTag <CR>
+nnoremap <silent> <Leader>t :Leaderf bufTag <CR>
 nnoremap <silent> <Leader>f :Leaderf file ~/Document/Seafile<CR>
 nnoremap <silent> <Leader>fp :Leaderf file ~/Document/Seafile/private<CR>
 nnoremap <silent> <Leader>l :Leaderf line<CR>
@@ -619,7 +623,25 @@ let g:Lf_WildIgnore = {
         \ 'dir': ['.svn','.git','.hg'],
         \ 'file': ['*.sw?','~$*','*.bak','*.exe','*.o','*.so','*.py[co]','*.pdf','*.csv','*.log','*.7z','*.zip','*.bin']
         \}
+" leaderf with gutentags
+let g:Lf_GtagsAutoGenerate = 0
+let g:Lf_GtagsGutentags = 1
+let g:Lf_GtagsAutoUpdate = 1
 
+" generate tags
+" gutentags 搜索工程目录的标志，碰到这些文件/目录名就停止向上一级目录递归
+let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
+" 所生成的数据文件的名称
+let g:gutentags_ctags_tagfile = '.tags'
+" 将自动生成的 tags 文件全部放入 ~/.LfCache/gtags 目录中，避免污染工程目录
+" let s:vim_tags = expand('~/.cache/tags')
+" let g:gutentags_cache_dir = s:vim_tags
+let g:Lf_CacheDirectory= expand('~')
+let g:gutentags_cache_dir = expand(g:Lf_CacheDirectory.'/.LfCache/gtags')
+" 配置 ctags 的参数
+let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
+let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
+let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
 
 " ==== netrw
 " switch between splits using ctrl + {h,j,k,l}
@@ -734,12 +756,21 @@ xmap i, <Plug>(swap-textobject-i)
 omap a, <Plug>(swap-textobject-a)
 xmap a, <Plug>(swap-textobject-a)
 
-" try to define swap rule for haskell ->
-" let g:swap#rules = deepcopy(g:swap#default_rules)
-" let g:swap#rules += [{
-"   \   "delimiter": ['->'],
-"   \   "body": '\w*->\w',
-"   \ }]
+
+"terryma/vim-expand-region  +/- to change visual select region
+let g:expand_region_text_objects = {
+      \ 'iw'  :0,
+      \ 'iW'  :0,
+      \ 'i"'  :0,
+      \ 'i''' :0,
+      \ 'i]'  :1, 
+      \ 'ib'  :1, 
+      \ 'iB'  :1, 
+      \ 'il'  :0, 
+      \ 'ip'  :0,
+      \ 'ie'  :0, 
+      \ }
+
 
 "switch between true and false combined with speeddating
 nmap <Plug>SwapItFallbackIncrement <Plug>SpeedDatingUp
@@ -861,16 +892,23 @@ let g:asynctasks_term_rows = float2nr(winheight("%")/2.618)
 nnoremap <silent> <Leader>m :AsyncTask file-build<cr>
 nnoremap <silent> <Leader>r :AsyncTask file-run<cr>
 nnoremap <silent> <Leader>c :AsyncTask file-check<cr>
-nnoremap <silent> <Leader>t :AsyncTaskFzf <cr>
+" nnoremap <silent> <Leader>t :AsyncTaskFzf <cr>
 
 
 " ==== translator
-nmap <silent> <Leader>t <Plug>TranslateW
-vmap <silent> <Leader>t <Plug>TranslateWV
+nmap <silent> <Leader>T <Plug>TranslateW 
+vmap <silent> <Leader>T <Plug>TranslateWV
 let g:translator_target_lang='zh'
 let g:translator_default_engines=['haici', 'google', 'youdao']
+
+nmap <Leader>u :nohlsearch<CR>
 
 " ==== ultisnip
 let g:UltiSnipsExpandTrigger="<c-y>"
 let g:UltiSnipsJumpForwardTrigger="<c-j>"
 let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+
+
+" FixCursorHold.nvim  " acclerate cursor event
+" use updatetime instead if not defined
+let g:cursorhold_updatetime = 100
